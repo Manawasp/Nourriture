@@ -3,8 +3,8 @@ require "rubygems"
 require "json"
 require "net/http"
 
-# api_key = API-KEY 
-# workspace_id = WORKSPACE-ID 
+# api_key = API-KEY
+# workspace_id = WORKSPACE-ID
 # assignee = ASSIGNEE-EMAIL
 
 # set up HTTPS connection
@@ -15,18 +15,22 @@ http = Net::HTTP.new(uri.host, uri.port)
 
 # set up the request
 
-req = Net::HTTP::Post.new(uri.path, header = { "Content-Type" => "application/json" })
-# req.body = {
-    # "data" => "helloworld"
-# }.to_json()
+req = Net::HTTP::Post.new(uri.path, header = { "Content-Type" => "application/json",
+                                                "CONTENT_TYPE" => "application/json",
+                                                "ContentType" => "application/json"  })
+req.body = {
+    title: "helloworld",
+    data: "yolo"
+}.to_json
 
+puts req.body
 # issue the request
 res = http.request(req)
 # output
 body = JSON.parse(res.body)
 
-if res.code.to_i != 200 then 
-    puts "Server returned an error: #{body.inspect}" 
+if res.code.to_i != 200 then
+    puts "Server returned an error: #{body.inspect}"
 else
-    puts "Created task with id: #{body.inspect}" 
+    puts "Created task with id: #{body.inspect}"
 end

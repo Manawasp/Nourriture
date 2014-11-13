@@ -1,39 +1,44 @@
-
 /**
- * Module dependencies.
+ * Name         : Food Nourriture
+ * Description  : Build Food application for Jiaotong University IT department
+ * Authors      : Clovis Kyndt (https://github.com/Manawasp)
+ * Doc          : http://docs.foodapicn.apiary.io/
+ * Source       : https ://github.com/ftb59/Nourriture
+ * Date         : 14/10/14 to xx/xx/xx
  */
 
-var express = require('express')
-  , http = require('http')
-  , path = require('path');
-  // , routes = require('./routes');
-  // , user = require('./routes/user');
+/**
+ * load librairie
+ */
 
-var app = express();
+var express     = require('express')
+  , db          = require('./db')
+  , bodyParser  = require('body-parser');
 
-var users = require('./routes/users')(app);
-var users = require('./routes/followers')(app);
 
-// all environments
-app.set('port', process.env.PORT || 1337);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+/**
+ * global var 
+ */
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
+var app         = express()
+  , port        = process.env.PORT || 8080;
 
-// app.get('/', routes.index);
-// app.get('/users', user.list);
+/**
+ * init parser json
+ */
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+/**
+ * Initialization
+ */
+
+app.use(require('./controllers'));
+
+/**
+  * Start server
+  */
+
+app.listen(port);
+console.log('Express server listening on port ' + port);

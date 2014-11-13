@@ -6,9 +6,8 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.18.2",
-    "jade": "*",
-    "mongodb": ">= 0.9.6-7",
-    "mongoose": ">= 3.8.19"
+    "express": "~4.0.0",
+    "mongoose": "~3.6.13",
+    "body-parser": "~1.0.1"
   }
 }
