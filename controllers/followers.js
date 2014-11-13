@@ -20,7 +20,7 @@ router.post('/', function(req, res){
 
 
 /**
- * [Get] Retrieve Follower list
+ * [GET] Retrieve Follower list
  */
 
 router.get('/:uid', function(req, res){

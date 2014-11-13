@@ -9,52 +9,52 @@ var express   = require('express')
   , User      = mongoose.model('User');
  
 /**
- * [SEARCH] User Collection
+ * [SEARCH] Moments
  */
 
 router.get('/', function(req, res){
-  console.log('[SEARCH] User');
+  console.log('[SEARCH] Moment');
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [POST] User Collection
+ * [POST] Moments
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] User");
+  console.log("[CREATE] Moment");
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [GET] User
+ * [GET] Moments
  */
 
-router.get('/:uid', function(req, res){
-  console.log('[GET] User');
+router.get('/:mid', function(req, res){
+  console.log('[GET] Moment');
   // res.type('application/json');
   // res.send(200, usersResponse);
   res.json({ message: 'hooray! welcome to our api!' }); 
 })
 
 /**
- * [UPDATE] User
+ * [UPDATE] Moments
  */
 
-router.patch('/:uid', function(req, res){
-    console.log('[UPDATE] User');
+router.patch('/:mid', function(req, res){
+    console.log('[UPDATE] Moment');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [DELETE] User
+ * [DELETE] Moments
  */
 
-router.delete('/:uid', function(req, res){
-    console.log('[DELETE] User');
+router.delete('/:mid', function(req, res){
+    console.log('[DELETE] Moment');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })

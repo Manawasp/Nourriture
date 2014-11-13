@@ -9,52 +9,52 @@ var express   = require('express')
   , User      = mongoose.model('User');
  
 /**
- * [SEARCH] User Collection
+ * [SEARCH] Recipes
  */
 
 router.get('/', function(req, res){
-  console.log('[SEARCH] User');
+  console.log('[SEARCH] Recipes');
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [POST] User Collection
+ * [POST] Recipes
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] User");
+  console.log("[CREATE] Recipes");
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [GET] User
+ * [GET] Recipes
  */
 
-router.get('/:uid', function(req, res){
-  console.log('[GET] User');
+router.get('/:rid', function(req, res){
+  console.log('[GET] Recipes');
   // res.type('application/json');
   // res.send(200, usersResponse);
   res.json({ message: 'hooray! welcome to our api!' }); 
 })
 
 /**
- * [UPDATE] User
+ * [UPDATE] Recipes
  */
 
-router.patch('/:uid', function(req, res){
-    console.log('[UPDATE] User');
+router.patch('/:rid', function(req, res){
+    console.log('[UPDATE] Recipes');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [DELETE] User
+ * [DELETE] Recipes
  */
 
-router.delete('/:uid', function(req, res){
-    console.log('[DELETE] User');
+router.delete('/:rid', function(req, res){
+    console.log('[DELETE] Recipes');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })

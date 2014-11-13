@@ -9,52 +9,52 @@ var express   = require('express')
   , User      = mongoose.model('User');
  
 /**
- * [SEARCH] User Collection
+ * [SEARCH] Ingredients Collection
  */
 
 router.get('/', function(req, res){
-  console.log('[SEARCH] User');
+  console.log('[SEARCH] Ingredients');
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [POST] User Collection
+ * [POST] Ingredients Collection
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] User");
+  console.log("[CREATE] Ingredients");
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [GET] User
+ * [GET] Ingredients
  */
 
 router.get('/:uid', function(req, res){
-  console.log('[GET] User');
+  console.log('[GET] Ingredients');
   // res.type('application/json');
   // res.send(200, usersResponse);
-  res.json({ message: 'hooray! welcome to our api!' }); 
+  res.json({ message: 'Non implemente' }); 
 })
 
 /**
- * [UPDATE] User
+ * [UPDATE] Ingredients
  */
 
 router.patch('/:uid', function(req, res){
-    console.log('[UPDATE] User');
+    console.log('[UPDATE] Ingredients');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })
 
 /**
- * [DELETE] User
+ * [DELETE] Ingredients
  */
 
 router.delete('/:uid', function(req, res){
-    console.log('[DELETE] User');
+    console.log('[DELETE] Ingredients');
     res.type('application/json');
     res.send(200, {message: "Non implemete"});
 })
