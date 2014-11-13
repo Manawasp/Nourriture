@@ -15,9 +15,7 @@ http = Net::HTTP.new(uri.host, uri.port)
 
 # set up the request
 
-req = Net::HTTP::Post.new(uri.path, header = { "Content-Type" => "application/json",
-                                                "CONTENT_TYPE" => "application/json",
-                                                "ContentType" => "application/json"  })
+req = Net::HTTP::Post.new(uri.path, header = { "Content-Type" => "application/json" })
 req.body = {
     title: "helloworld",
     data: "yolo"
