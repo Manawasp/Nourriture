@@ -21,9 +21,9 @@ var User = new Schema({
  */
 
 User.methods.create_by_email = function(params) {
-  error = validate_pseudo(params.pseudo)  ||
-          validate_email(params.email)    ||
-          validate_password(params.password);
+  error = exist_pseudo(params.pseudo)     || validate_pseudo(params.pseudo)  ||
+          exist_email(params.email)       || validate_email(params.email)    ||
+          exist_password(params.password) || validate_password(params.password);
   if (error) {
     return error
   }
@@ -39,16 +39,37 @@ User.methods.create_by_email = function(params) {
   return null
 }
 
+
+User.methods.update_information = function(params) {
+  error = validate_pseudo(params.pseudo)  ||
+          validate_email(params.email)    ||
+          validate_password(params.password);
+  if (error) {
+    return error
+  }
+  if (params.pseudo == "") {
+    this.pseudo     = params.pseudo || this.pseudo
+  }
+  this.firstname  = params.firstname  || this.firstname
+  this.lastname   = params.lastname   || this.lastname
+  this.email      = params.email      || this.email
+  if (params.password) {
+    this.password = crypto.createHash('md5').update(params.password).digest("hex");
+  }
+  this.updated_at = new Date
+  return null
+}
+
 User.methods.personal_information = function(params) {
-  return {id:             this._id,
-              pseudo:     this.pseudo,
-              firstname:  this.firstname,
-              lastname:   this.lastname,
-              avatar:     this.avatar,
-              email:      this.email,
-              access:     this.access,
-              created_at: this.created_at,
-              updated_at: this.updated_at}
+  return {id:         this._id,
+          pseudo:     this.pseudo,
+          firstname:  this.firstname,
+          lastname:   this.lastname,
+          avatar:     this.avatar,
+          email:      this.email,
+          access:     this.access,
+          created_at: this.created_at,
+          updated_at: this.updated_at}
 }
 
 User.methods.information = function(params) {
@@ -67,10 +88,17 @@ User = mongoose.model('User', User);
  * Private Method
  */
 
+var exist_pseudo = function(pseudo) {
+  if (pseudo == undefined || pseudo == null) {
+    return "pseudo is undefined"
+  }
+  return null
+}
+
 var validate_pseudo = function(pseudo) {
   filter = /^\w+$/
   if (pseudo == undefined || pseudo == null) {
-    return "pseudo is undefined"
+    return null
   }
   else if (pseudo.length < 3) {
     return "pseudo contain at least 3 characters"
@@ -81,10 +109,17 @@ var validate_pseudo = function(pseudo) {
   return null
 }
 
+var exist_email = function(email) {
+  if (email == undefined || email == null) {
+    return "email is undefined"
+  }
+  return null
+}
+
 var validate_email = function(email) {
   filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
   if (email == undefined || email == null) {
-    return "email is undefined"
+    return null
   }
   else if (!filter.test(email)) {
     return "email must be validate email"
@@ -92,8 +127,18 @@ var validate_email = function(email) {
   return null
 }
 
+var exist_password = function(password) {
+  if (password == undefined || password == null) {
+    return "email is undefined"
+  }
+  return null
+}
+
 var validate_password = function(password) {
-  if(password.length < 6) {
+  if (password == undefined || password == null) {
+    return null
+  }
+  else if(password.length < 6) {
     return "password must contain at least 6 characters"
   }
   else if (!/[0-9]/.test(password)) {

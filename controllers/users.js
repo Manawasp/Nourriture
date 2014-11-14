@@ -57,9 +57,22 @@ router.get('/:uid', function(req, res){
  */
 
 router.patch('/:uid', function(req, res){
-    console.log('[UPDATE] User');
-    res.type('application/json');
-    res.send(200, {message: "Non implemete"});
+  console.log('[UPDATE] User');
+  res.type('application/json');
+  User.findOne({'_id': req.params.uid}, '', function (err, u) {
+    if (u) {
+      error = u.update_information(req.body)
+      if (error == null) {
+        res.send(200, u.information())
+      }
+      else {
+        res.send(400, {error: error})
+      }
+    }
+    else {
+      res.send(404, {error: "resource not found"})
+    }
+  });
 })
 
 /**
