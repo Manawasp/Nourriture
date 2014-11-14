@@ -61,6 +61,20 @@ Ingredient.methods.update = function(params) {
   }
 }
 
+/**
+ * Get information
+ */
+
+Ingredient.methods.information = function() {
+  return {id:         this._id,
+          name:       this.name,
+          image:      this.image,
+          icon:       this.icon,
+          labels:     this.labels,
+          blacklist:  this.blacklist}
+}
+
+
 mongoose.model('Ingredient', Ingredient);
 
 /**

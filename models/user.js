@@ -75,7 +75,7 @@ User.methods.check_password = function(password) {
  * Get information
  */
 
-User.methods.personal_information = function(params) {
+User.methods.personal_information = function() {
   return {id:         this._id,
           pseudo:     this.pseudo,
           firstname:  this.firstname,
@@ -87,7 +87,7 @@ User.methods.personal_information = function(params) {
           updated_at: this.updated_at}
 }
 
-User.methods.information = function(params) {
+User.methods.information = function() {
   return {id:         this._id,
           pseudo:     this.pseudo,
           avatar:     this.avatar,

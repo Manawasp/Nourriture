@@ -1,9 +1,10 @@
 var jwt       = require('jsonwebtoken')
   , secret    = 'eyJmaXJzdG5hbWUiOiJDbG92aXMiLCJsYXN0bmF'
-  , user_id   = null,
-  , access_consumer     = false,
-  , access_supplier     = false,
-  , access_gastronomist = false;
+  , user_id   = null
+  , access_consumer     = false
+  , access_supplier     = false
+  , access_gastronomist = false
+  , access_admin        = false
 
 exports.connected = function() {
   return (user_id != null)
@@ -25,6 +26,10 @@ exports.access_supplier = function() {
   return access_supplier
 }
 
+exports.access_admin = function() {
+  return access_admin
+}
+
 exports.verify = function(token) {
   if (token == undefined) {
     return {code: 401, json_value: {error: "you need to be connected"}};
@@ -37,9 +42,10 @@ exports.verify = function(token) {
       else {
         user_id = decoded.id
         if (decoded.access) {
-          access_consumer = (decoded.access['consumer'] || false) && decoded.access['consumer'] == true
-          access_supplier = (decoded.access['supplier'] || false) && decoded.access['supplier'] == true
-          access_gastronomist = (decoded.access['gastronomist'] || false) && ecoded.access['gastronomist'] == true
+          if (decoded.access.indexOf('consumer') != -1) {access_consumer = true}
+          if (decoded.access.indexOf('supplier') != -1) {access_supplier = true}
+          if (decoded.access.indexOf('gastronomist') != -1) {access_gastronomist = true}
+          if (decoded.access.indexOf('admin') != -1) {access_admin = true}
         }
       }
     });
