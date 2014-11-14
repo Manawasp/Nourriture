@@ -67,6 +67,10 @@ User.methods.update_information = function(params) {
   return null
 }
 
+User.methods.check_password = function(password) {
+  return (this.password == crypto.createHash('md5').update(password).digest("hex"))
+}
+
 /**
  * Get information
  */
