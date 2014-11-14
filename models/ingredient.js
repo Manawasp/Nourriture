@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var mongoose  = require('mongoose')
+  , Schema    = mongoose.Schema;
 
 var Media = new Schema({
     url         : String,
@@ -12,12 +12,86 @@ var Media = new Schema({
 var Ingredient = new Schema({
     name        : String,
     image       : [Media],
-    icon        : [Media],
+    icon        : String,
     labels      : [String],
     blacklist   : [String],
-    created_by  : [Schema.Types.ObjectId],
+    created_by  : String,
     created_at  : Date,
     updated_at  : Date
 });
 
+/**
+ * Public Method
+ */
+
+Ingredient.methods.create = function(params, user_id) {
+  error = exist_name(params.name)                       ||
+          validate_name(params.name)                    ||
+          validate_array(params.labels, "labels")       ||
+          validate_array(params.blacklist, "blacklist");
+  if (error) {
+    return error
+  }
+  else {
+    this.name       = params.name
+    this.image      = []
+    this.icon       = ""
+    this.labels     = params.labels || []
+    this.blacklist  = params.blacklist || []
+    this.created_by = user_id
+    this.created_at = new Date
+    this.updated_at = new Date
+    return null
+  }
+}
+
+Ingredient.methods.update = function(params) {
+  error = validate_name(params.name)                    ||
+          validate_array(params.labels, "labels")       ||
+          validate_array(params.blacklist, "blacklist");
+  if (error) {
+    return error
+  }
+  else {
+    this.name       = params.name || this.name
+    this.labels     = params.labels || this.labels
+    this.blacklist  = params.blacklist || this.blacklist
+    this.updated_at = new Date
+    return null
+  }
+}
+
 mongoose.model('Ingredient', Ingredient);
+
+/**
+ * Private Method
+ */
+
+var exist_name = function(name) {
+  if (name == null || name == undefined) {
+    return "name is undefined"
+  }
+  return null;
+}
+
+var validate_name = function(name) {
+  if (name == null || name == undefined) {
+    return null
+  }
+  else if (name.length < 2) {
+    return "name contain at least 2 characters"
+  }
+  return null
+}
+
+var validate_array = function(array_value, valeur) {
+  if (array_value == null) {
+    return null
+  }
+  else if (Array.isArray(array_value)) {
+    return null
+  }
+  else {
+    return (valeur + " must be an array")
+  }
+}

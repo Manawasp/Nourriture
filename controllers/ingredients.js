@@ -6,8 +6,24 @@
 var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
-  , User      = mongoose.model('User');
- 
+  , User      = mongoose.model('User')
+  , auth      = require('./services/authentification');
+  
+/**
+ * Router middleware
+ */
+
+router.use(function(req, res, next) {
+  error = auth.verify(req.header('Auth-Token'))
+  if (error != null) {
+    res.type('application/json');
+    res.send(error.code, error.json_value);
+  }
+  else {
+    next()
+  }
+})
+
 /**
  * [SEARCH] Ingredients Collection
  */
