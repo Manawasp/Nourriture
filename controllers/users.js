@@ -6,8 +6,29 @@
 var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
-  , User      = mongoose.model('User');
+  , User      = mongoose.model('User')
+  , auth      = require('./services/authentification');
+
+var connected_id = null;
  
+/**
+ * Router middleware
+ */
+router.use(function(req, res, next) {
+  if (req.path == '/') {
+    next()
+  } else {
+    error = auth.verify(req.header('Auth-Token'))
+    if (error != null) {
+      res.type('application/json');
+      res.send(error.code, error.json_value);
+    }
+    else {
+      next()
+    }
+  }
+});
+
 /**
  * [SEARCH] User Collection
  */
@@ -44,7 +65,12 @@ router.get('/:uid', function(req, res){
   res.type('application/json')
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
-      res.send(200, u.information())
+      if (u._id == auth.user_id()) {
+        res.send(200, u.personal_information())
+      }
+      else {
+        res.send(200, u.information())
+      }
     }
     else {
       res.send(404, {error: "resource not found"})
@@ -109,5 +135,5 @@ var uniqueness_email = function(user, res, callback) {
 
 var valide_create = function(user, res) {
   user.save()
-  res.send(200, user.personal_information())
+  res.send(200, {token: user.auth_token(), user: user.personal_information()})
 }

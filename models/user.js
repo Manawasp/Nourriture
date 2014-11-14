@@ -1,6 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var crypto = require('crypto');
+var mongoose = require('mongoose')
+  , Schema = mongoose.Schema
+  , crypto = require('crypto')
+  , jwt = require('jsonwebtoken')
+  , secret = 'eyJmaXJzdG5hbWUiOiJDbG92aXMiLCJsYXN0bmF';
 
 var User = new Schema({
     pseudo      : String,
@@ -8,6 +10,7 @@ var User = new Schema({
     lastname    : String,
     email       : String,
     password    : String,
+    salt        : String,
     access      : [String],
     followers   : [Schema.Types.ObjectId],
     followeds   : [Schema.Types.ObjectId],
@@ -33,6 +36,7 @@ User.methods.create_by_email = function(params) {
   this.email      = params.email
   this.avatar     = ""
   this.password   = crypto.createHash('md5').update(params.password).digest("hex");
+  this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
   this.access     = ['consumer']
   this.created_at = new Date
   this.updated_at = new Date
@@ -55,6 +59,7 @@ User.methods.update_information = function(params) {
   this.email      = params.email      || this.email
   if (params.password) {
     this.password = crypto.createHash('md5').update(params.password).digest("hex");
+    this.salt     = crypto.createHash('md5').update((new Date().toString())).digest("hex");
   }
   this.updated_at = new Date
   return null
@@ -81,6 +86,12 @@ User.methods.information = function(params) {
           updated_at: this.updated_at}
 }
 
+User.methods.auth_token = function() {
+  if (this.salt == undefined) {
+    this.salt = crypto.createHash('md5').update((new Date().toString())).digest("hex");
+  }
+  return (jwt.sign({id: this._id, salt: this.salt}, secret));
+}
 
 User = mongoose.model('User', User);
 
