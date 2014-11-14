@@ -34,6 +34,8 @@ User.methods.create_by_email = function(params) {
   this.firstname  = params.firstname  || ""
   this.lastname   = params.lastname   || ""
   this.email      = params.email
+  this.followers  = []
+  this.followeds  = []
   this.avatar     = ""
   this.password   = crypto.createHash('md5').update(params.password).digest("hex");
   this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
@@ -65,6 +67,10 @@ User.methods.update_information = function(params) {
   return null
 }
 
+/**
+ * Get information
+ */
+
 User.methods.personal_information = function(params) {
   return {id:         this._id,
           pseudo:     this.pseudo,
@@ -86,11 +92,57 @@ User.methods.information = function(params) {
           updated_at: this.updated_at}
 }
 
+/**
+ * Authentification Method
+ */
+
 User.methods.auth_token = function() {
   if (this.salt == undefined) {
     this.salt = crypto.createHash('md5').update((new Date().toString())).digest("hex");
   }
-  return (jwt.sign({id: this._id, salt: this.salt}, secret));
+  return (jwt.sign({id: this._id, salt: this.salt, access: this.access}, secret));
+}
+
+/**
+ * Followers methods
+ */
+
+User.methods.follow = function(user_id) {
+  if (this.followers.indexOf(user_id) != -1) {
+    return "already in your followers"
+  } else {
+    this.followers.push(user_id)
+    return null
+  }
+}
+
+User.methods.followed_by = function(user_id) {
+  if (this.followeds.indexOf(user_id) != -1) {
+    return "already followed by you"
+  } else {
+    this.followeds.push(user_id)
+    return null
+  }
+}
+
+User.methods.unfollow = function(user_id) {
+  index_tab = this.followers.indexOf(user_id)
+  if (index_tab == -1) {
+    return "isn't in your followers"
+  } else {
+    this.followers.splice(index_tab, 1)
+    return null
+  }
+}
+
+User.methods.unfollowed_by = function(user_id) {
+  index_tab = this.followeds.indexOf(user_id)
+  if (index_tab == -1) {
+    return "he isn't followed by you"
+  } else {
+    this.followeds.splice(index_tab, 1)
+    return null
+  }
 }
 
 User = mongoose.model('User', User);

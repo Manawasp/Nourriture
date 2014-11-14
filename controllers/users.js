@@ -9,11 +9,10 @@ var express   = require('express')
   , User      = mongoose.model('User')
   , auth      = require('./services/authentification');
 
-var connected_id = null;
- 
 /**
  * Router middleware
  */
+
 router.use(function(req, res, next) {
   if (req.path == '/') {
     next()
@@ -89,6 +88,7 @@ router.patch('/:uid', function(req, res){
     if (u) {
       error = u.update_information(req.body)
       if (error == null) {
+        u.save()
         res.send(200, u.information())
       }
       else {
@@ -96,7 +96,7 @@ router.patch('/:uid', function(req, res){
       }
     }
     else {
-      res.send(404, {error: "resource not found"})
+      res.send(404, {error: "account invalid"})
     }
   });
 })
@@ -120,7 +120,6 @@ module.exports = router
 /**
  * Private method
  */
-
 
 var uniqueness_email = function(user, res, callback) {
   User.findOne({'email': user.email}, '', function (err, user_data) {
