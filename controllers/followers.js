@@ -40,8 +40,9 @@ router.post('/', function(req, res){
           if (user_cible) {
             error = current_user.follow(user_cible._id) || user_cible.followed_by(current_user._id)
             if (error == null) {
-              current_user.update()
-              user_cible.update()
+              console.log(current_user.followers)
+              current_user.save()
+              user_cible.save()
               res.send(200, user_cible.information())
             }
             else {res.send(400, {error: error})}
@@ -55,22 +56,34 @@ router.post('/', function(req, res){
   });
 })
 
-
 /**
  * [GET] Retrieve Follower list
  */
 
 router.get('/:uid', function(req, res){
-	console.log('retrieve !');
-    res.type('application/json');
-    res.send(200, followersResponse);
+  console.log('[GET] Get follower list');
+  res.type('application/json');
+  User.findOne({'_id': req.params.uid}, '', function (err, user_cible) {
+    if (user_cible) {
+      followers_data = []
+      User.find({'_id': user_cible.followers}, '', function (err, users) {
+        if (users) {
+          for (var i = 0; i < users.length; i++) {
+            followers_data.push(users[i].information())
+          }
+        }
+        res.send(200, followers_data)
+      });
+    }
+    else {res.send(404, {error: "resource not found"})}
+  });
 })
 
 /**
  * [DELETE] Delete an User follower
  */
 
-router.post('/:uid', function(req, res){
+router.delete('/:uid', function(req, res){
   console.log('[DELETE] Follow specific user !');
   // Retrieve Current User
   res.type('application/json');
@@ -82,9 +95,9 @@ router.post('/:uid', function(req, res){
           if (user_cible) {
             error = current_user.unfollow(user_cible._id) || user_cible.unfollowed_by(current_user._id)
             if (error == null) {
-              current_user.update()
-              user_cible.update()
-              res.send(200, success: 'user is removed to your follower')
+              current_user.save()
+              user_cible.save()
+              res.send(200, {success: 'user is removed to your follower'})
             }
             else {res.send(400, {error: error})}
           }
