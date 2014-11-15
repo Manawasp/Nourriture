@@ -35,7 +35,28 @@ router.use(function(req, res, next) {
 router.get('/', function(req, res){
   console.log('[SEARCH] User');
   res.type('application/json');
-  res.send(200, {message: "Non implemete"});
+  params = req.body
+  if (typeof params.pseudo == 'string') {
+    var re = new RegExp(params.pseudo, 'i');
+    query = User.find({'name': re})
+  } else {
+    query = User.find({})
+  }
+  offset = 0
+  limit = 21
+  query.skip(offset).limit(limit)
+  query.exec(function (err, users) {
+    data_user = []
+    if (err) {
+      res.send(500, {error: "user: f(router.post'/search')"})
+    }
+    else if (users) {
+      for (var i = 0; i < users.length; i++) {
+        data_user.push(users[i].information())
+      }
+    }
+    res.send(200, {users: data_user, limit: limit, offset: offset, size: data_user.length})
+  });
 })
 
 /**

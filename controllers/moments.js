@@ -29,7 +29,7 @@ router.use(function(req, res, next) {
  * [SEARCH] Moments
  */
 
-router.get('/search', function(req, res){
+router.post('/search', function(req, res){
   console.log('[SEARCH] Moment');
   res.type('application/json');
   params = req.body

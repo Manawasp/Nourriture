@@ -30,10 +30,52 @@ router.use(function(req, res, next) {
  * [SEARCH] Recipes
  */
 
-router.get('/', function(req, res){
+router.post('/search', function(req, res){
   console.log('[SEARCH] Recipes');
   res.type('application/json');
-  res.send(200, {message: "Non implemete"});
+  res.type('application/json')
+  params = req.body
+  if (typeof params.title == 'string') {
+    var re = new RegExp(params.title, 'i');
+    query = Recipe.find({'title': re})
+  } else {
+    query = Recipe.find({})
+  }
+  offset = 0
+  limit = 11
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 21) {limit = params.limit}
+  if (params.blacklist && Array.isArray(params.blacklist)) {
+    query.where('blacklist').nin(params.blacklist);
+  }
+  if (params.labels && Array.isArray(params.labels)) {
+    query.where('labels').in(params.labels);
+  }
+  if (params.ingredients && Array.isArray(params.ingredients)) {
+    query.where('ingredients').in(params.ingredients);
+  }
+  if (params.savours && Array.isArray(params.savours)) {
+    query.where('savours').in(params.savours);
+  }
+  if (typeof params.country == 'string') {
+    query.where('country').equals(params.country);
+  }
+  if (typeof params.create_by == 'string') {
+    query.where('create_by').equals(params.create_by);
+  }
+  query.skip(offset).limit(limit)
+  query.exec(function (err, recipes) {
+    data_recipes = []
+    if (err) {
+      res.send(500, {error: "recipes: f(router.post'/search')"})
+    }
+    else if (recipes) {
+      for (var i = 0; i < recipes.length; i++) {
+        data_ingredient.push(recipes[i].information())
+      }
+    }
+    res.send(200, {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length})
+  });
 })
 
 /**

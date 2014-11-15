@@ -37,7 +37,7 @@ router.post('/search', function(req, res){
     var re = new RegExp(params.name, 'i');
     query = Ingredient.find({'name': re})
   } else {
-    query = Ingredient.find()
+    query = Ingredient.find({})
   }
   offset = 0
   limit = 21

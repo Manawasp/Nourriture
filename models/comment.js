@@ -3,6 +3,7 @@ var mongoose = require('mongoose')
 
 var Comment = new Schema({
     comment     : String,
+    ref_id      : String,
     created_by  : String,
     created_at  : Date,
     updated_at  : Date
@@ -12,14 +13,15 @@ var Comment = new Schema({
  * Public Method
  */
 
-Comment.methods.create = function(params, user_id) {
+Comment.methods.create = function(params, user_id, ref_id) {
   error = exist_comment(params.comment)  ||
           validate_comment(params.comment);
   if (error) {
     return error
   }
   else {
-    this.comment = params.comment
+    this.comment    = params.comment
+    this.ref_id     = ref_id
     this.created_by = user_id
     this.created_at = new Date
     this.updated_at = new Date

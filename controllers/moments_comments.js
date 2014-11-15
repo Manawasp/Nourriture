@@ -30,10 +30,28 @@ router.use(function(req, res, next) {
  * [SEARCH] Moments Comments Collection
  */
 
-router.get('/', function(req, res){
+router.post('/search', function(req, res){
   console.log('[SEARCH] Moments Comments');
   res.type('application/json');
-  res.send(200, {message: "Non implemete"});
+  params = req.body
+  query = Comment.find({'ref_id': req.params.mid})
+  offset = 0
+  limit = 21
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 40) {limit = params.limit}
+  query.skip(offset).limit(limit)
+  query.exec(function (err, comments) {
+    data_comment = []
+    if (err) {
+      res.send(500, {error: "f(router.post'/search')"})
+    }
+    else if (comments) {
+      for (var i = 0; i < comments.length; i++) {
+        data_comment.push(comments[i].information())
+      }
+    }
+    res.send(200, {comments: data_comment, limit: limit, offset: offset, size: data_comment.length})
+  });
 })
 
 /**
@@ -43,10 +61,10 @@ router.get('/', function(req, res){
 router.post('/', function(req, res){
   console.log("[CREATE] Moments Comments");
   res.type('application/json');
-  Moment.findOne({'_id': req.params.rid}, '', function(err, moment) {
+  Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
       comment = new Comment;
-      error = comment.create(req.body, auth.user_id())
+      error = comment.create(req.body, auth.user_id(), moment._id)
       if (error) {
         res.send(400, {error: error})
       }
