@@ -83,7 +83,7 @@ router.patch('/:rid', function(req, res){
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
-      if (auth.access_admin() || recipe._id == auth.user_id()) {
+      if (auth.access_admin() || recipe.create_by == auth.user_id()) {
         error = recipe.update(req.body)
         if (error) {
           res.send(400, {error: error})

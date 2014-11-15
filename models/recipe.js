@@ -144,7 +144,9 @@ Recipe.methods.information = function() {
           country:      this.country,
           city:         this.city,
           likes:        this.likes.length,
-          comments:     this.comments.length}
+          comments:     this.comments.length,
+          created_at:   this.created_at,
+          updated_at:   this.updated_at}
 }
 
 mongoose.model('Recipe', Recipe);
