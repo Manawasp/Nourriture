@@ -6,7 +6,8 @@
 var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
-  , User      = mongoose.model('User');
+  , User      = mongoose.model('User')
+  , auth      = require('./services/authentification');
  
 /**
  * [SEARCH] Moments
