@@ -8,7 +8,8 @@ var express     = require('express')
   , mongoose    = require('mongoose')
   , User        = mongoose.model('User')
   , Ingredient  = mongoose.model('Ingredient')
-  , Recipe      = mongoose.model('Recipe');
+  , Recipe      = mongoose.model('Recipe')
+  , auth      = require('./services/authentification');
  
 /**
  * Router middleware

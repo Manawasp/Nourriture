@@ -13,7 +13,7 @@ var Comment = new Schema({
  */
 
 Comment.methods.create = function(params, user_id) {
-  error = exist_comment(params.comment)                 ||
+  error = exist_comment(params.comment)  ||
           validate_comment(params.comment);
   if (error) {
     return error
