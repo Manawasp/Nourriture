@@ -42,7 +42,7 @@ router.post('/search', function(req, res){
   offset = 0
   limit = 21
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
-  if (typeof params.limit == 'number' && params.limit > 0) {limit = params.limit}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 40) {limit = params.limit}
   if (params.blacklist && Array.isArray(params.blacklist)) {
     query.where('blacklist').nin(params.blacklist);
   }

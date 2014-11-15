@@ -11,13 +11,51 @@ var express   = require('express')
   , auth      = require('./services/authentification');
  
 /**
+ * Router middleware
+ */
+
+router.use(function(req, res, next) {
+  error = auth.verify(req.header('Auth-Token'))
+  if (error != null) {
+    res.type('application/json');
+    res.send(error.code, error.json_value);
+  }
+  else {
+    next()
+  }
+})
+
+/**
  * [SEARCH] Moments
  */
 
-router.get('/', function(req, res){
+router.get('/search', function(req, res){
   console.log('[SEARCH] Moment');
   res.type('application/json');
-  res.send(200, {message: "Non implemete"});
+  params = req.body
+  offset = 0
+  limit = 5
+  if (typeof params.user_id == 'string') {
+    query = Moment.find({'create_by': params.user_id})
+  }
+  else {
+    query = Moment.find({'create_by': auth.user_id()})
+  }
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 10) {limit = params.limit}
+  query.skip(offset).limit(limit)
+  query.exec(function (err, moments) {
+    data_moment = []
+    if (err) {
+      res.send(500, {error: "moment: f(router.post'/search')"})
+    }
+    else if (moments) {
+      for (var i = 0; i < moments.length; i++) {
+        data_moment.push(moments[i].information())
+      }
+    }
+    res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+  });
 })
 
 /**
@@ -119,36 +157,6 @@ module.exports = router
 var valid_create_moment = function(moment, res) {
   moment.save()
   show_moment(moment, res)
-  params = req.body
-  if (typeof params.name == 'string') {
-    var re = new RegExp(params.name, 'i');
-    query = Ingredient.find({'name': re})
-  } else {
-    query = Ingredient.find()
-  }
-  offset = 0
-  limit = 21
-  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
-  if (typeof params.limit == 'number' && params.limit > 0) {limit = params.limit}
-  if (params.blacklist && Array.isArray(params.blacklist)) {
-    query.where('blacklist').nin(params.blacklist);
-  }
-  if (params.labels && Array.isArray(params.labels)) {
-    query.where('labels').in(params.labels);
-  }
-  query.skip(offset).limit(limit)
-  query.exec(function (err, ingredients) {
-    data_ingredient = []
-    if (err) {
-      res.send(500, {error: "f(router.post'/search')"})
-    }
-    else if (ingredients) {
-      for (var i = 0; i < ingredients.length; i++) {
-        data_ingredient.push(ingredients[i].information())
-      }
-      res.send(404, {ingredients: data_ingredient})
-    }
-  });
 }
 
 var show_moment = function(moment, res) {
