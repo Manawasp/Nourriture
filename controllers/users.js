@@ -107,17 +107,23 @@ router.patch('/:uid', function(req, res){
   res.type('application/json');
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
-      error = u.update_information(req.body)
-      if (error == null) {
-        u.save()
-        res.send(200, u.information())
+      if (u._id == auth.user_id())
+      {
+        error = u.update_information(req.body)
+        if (error == null) {
+          u.save()
+          res.send(200, u.personal_information())
+        }
+        else {
+          res.send(400, {error: error})
+        }
       }
       else {
-        res.send(400, {error: error})
+        res.send(403, {error: "you don't have the permission"})
       }
     }
     else {
-      res.send(404, {error: "account invalid"})
+      res.send(404, {error: "resource not found"})
     }
   });
 })
@@ -127,9 +133,28 @@ router.patch('/:uid', function(req, res){
  */
 
 router.delete('/:uid', function(req, res){
-    console.log('[DELETE] User');
-    res.type('application/json');
-    res.send(200, {message: "Non implemete"});
+  console.log('[DELETE] User');
+  res.type('application/json');
+  User.findOne({'_id': req.params.uid}, '', function (err, u) {
+    if (u) {
+      if (u._id == auth.user_id())
+      {
+        error = u.update_information(req.body)
+        if (error == null) {
+          res.send(200, {success: "non implemente"})
+        }
+        else {
+          res.send(400, {error: error})
+        }
+      }
+      else {
+        res.send(403, {error: "you don't have the permission"})
+      }
+    }
+    else {
+      res.send(404, {error: "resource not found"})
+    }
+  });
 })
 
 /**

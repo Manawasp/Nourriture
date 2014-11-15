@@ -196,7 +196,7 @@ var validate_email = function(email) {
 
 var exist_password = function(password) {
   if (password == undefined || password == null) {
-    return "email is undefined"
+    return "password is undefined"
   }
   return null
 }
