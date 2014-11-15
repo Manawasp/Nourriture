@@ -109,6 +109,8 @@ Moment.methods.unlike = function(user_id) {
 Moment.methods.information = function() {
   return {id:           this._id,
           description:  this.description,
+          likes:        this.likes.length,
+          comments:     this.comments.length,
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }

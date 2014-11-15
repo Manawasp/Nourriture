@@ -132,7 +132,6 @@ router.delete('/:rid', function(req, res){
 
 module.exports = router
 
-
 /**
  * Private method
  */
@@ -148,15 +147,15 @@ var show_recipe = function(recipe, res) {
     data_user = {}
     if (user) {
       data_user = user.information()
-      Ingredient.find({'_id': recipe.ingredients}, '', function(err, ingredients) {
-        data_ingredient = []
-        if (ingredients) {
-          for (var i = 0; i < ingredients.length; i++) {
-            data_ingredient.push(ingredients[i].information())
-          }
-        }
-        res.send(200, {user: data_user, ingredients: data_ingredient, recipe: data_recipe})
-      });
     }
+    Ingredient.find({'_id': recipe.ingredients}, '', function(err, ingredients) {
+      data_ingredient = []
+      if (ingredients) {
+        for (var i = 0; i < ingredients.length; i++) {
+          data_ingredient.push(ingredients[i].information())
+        }
+      }
+      res.send(200, {user: data_user, ingredients: data_ingredient, recipe: data_recipe})
+    });
   });
 }
