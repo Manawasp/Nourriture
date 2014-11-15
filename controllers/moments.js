@@ -119,6 +119,36 @@ module.exports = router
 var valid_create_moment = function(moment, res) {
   moment.save()
   show_moment(moment, res)
+  params = req.body
+  if (typeof params.name == 'string') {
+    var re = new RegExp(params.name, 'i');
+    query = Ingredient.find({'name': re})
+  } else {
+    query = Ingredient.find()
+  }
+  offset = 0
+  limit = 21
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0) {limit = params.limit}
+  if (params.blacklist && Array.isArray(params.blacklist)) {
+    query.where('blacklist').nin(params.blacklist);
+  }
+  if (params.labels && Array.isArray(params.labels)) {
+    query.where('labels').in(params.labels);
+  }
+  query.skip(offset).limit(limit)
+  query.exec(function (err, ingredients) {
+    data_ingredient = []
+    if (err) {
+      res.send(500, {error: "f(router.post'/search')"})
+    }
+    else if (ingredients) {
+      for (var i = 0; i < ingredients.length; i++) {
+        data_ingredient.push(ingredients[i].information())
+      }
+      res.send(404, {ingredients: data_ingredient})
+    }
+  });
 }
 
 var show_moment = function(moment, res) {
