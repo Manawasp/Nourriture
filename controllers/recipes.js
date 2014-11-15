@@ -72,7 +72,7 @@ router.post('/search', function(req, res){
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
-        data_ingredient.push(recipes[i].information())
+        data_recipes.push(recipes[i].information())
       }
     }
     res.send(200, {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length})

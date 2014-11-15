@@ -305,4 +305,198 @@ describe('Recipes Controller', function(){
     });
   })
 
+  describe('SEARCH Recipe', function(){
+
+    it ("200: create recipe", function(done){
+     request
+      .post('localhost:8080/recipes')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user2_token)
+      .send('{"title":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"], "savours": ["sugar"], "labels": ["grandchallenge"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        recipe_id = res.body.recipe.id;
+        done()
+      });
+    });
+
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("you need to be connected");
+        done()
+      });
+    })
+
+    it ("200: search without pattern", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        expect(res.body.limit).to.be.an('number');
+        done()
+      });
+    });
+
+    it ("200: search with pattern", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"title":"ug"}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        expect(res.body.limit).to.be.an('number');
+        done()
+      });
+    });
+
+    it ("200: search without pattern + offset", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"offset":1}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(0);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(0);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(1);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+    it ("200: search without pattern + savours", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"savours":["sugar"]}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+    it ("200: search without pattern but with blacklist 'musulman'", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"blacklist":["musulman"]}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(0);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(0);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+    it ("200: search without pattern but with one ingredients", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"ingredients": ["'+ingredient1_id+'"]}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+    it ("200: search without pattern but with country", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"country": "france"}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+    it ("200: search without pattern but with labels", function(done){
+     request
+      .post('localhost:8080/recipes/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"labels": ["grandchallenge"]}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.recipes).to.exist;
+        expect(res.body.recipes.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        done()
+      });
+    });
+
+  });
 });

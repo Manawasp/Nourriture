@@ -416,7 +416,7 @@ describe('Ingredients Controller', function(){
       });
     });
 
-    it ("200: search without pattern + offset", function(done){
+    it ("200: search without pattern + limit", function(done){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
