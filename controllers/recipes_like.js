@@ -29,19 +29,45 @@ router.use(function(req, res, next) {
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] Moments Like");
+  console.log("[CREATE] Recipe Like");
   res.type('application/json');
-  res.send(200, {message: "Non implemete"});
+  Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
+    if (recipe) {
+      error = recipe.like(auth_user_id())
+      if (error) {
+        res.send(400, {error: error})
+      }
+      else {
+        res.send(200, {success: 'you like the recipe'})
+      }
+    }
+    else {
+      res.send(404, {error: 'resource not found'})
+    }
+  });
 })
 
 /**
  * [DELETE] Unlike Moment
  */
 
-router.delete('/:uid', function(req, res){
-    console.log('[DELETE] Moments Like');
-    res.type('application/json');
-    res.send(200, {message: "Non implemete"});
+router.delete('/', function(req, res){
+  console.log('[DELETE] Recipe Like');
+  res.type('application/json');
+  Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
+    if (recipe) {
+      error = recipe.unlike(auth_user_id())
+      if (error) {
+        res.send(400, {error: error})
+      }
+      else {
+        res.send(200, {success: 'you unlike the recipe'})
+      }
+    }
+    else {
+      res.send(404, {error: 'resource not found'})
+    }
+  });
 })
 
 /**
