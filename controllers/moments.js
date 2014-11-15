@@ -104,7 +104,10 @@ var show_moment = function(moment, res) {
             users_data.push(users[i].information())
           }
         }
-        res.send(200, {create_by: create_by, ingredients: data_ingredient, users: users_data, data_moment})
+        res.send(200, {create_by: create_by, 
+                      ingredients: data_ingredient,
+                      users: users_data, 
+                      moment: data_moment})
       });
     });
     //     res.send(200, {user: data_user, ingredients: data_ingredient, moment: data_recipe})
