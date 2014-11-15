@@ -29,7 +29,7 @@ router.use(function(req, res, next) {
  * [SEARCH] Ingredients Collection
  */
 
-router.get('/', function(req, res){
+router.post('/search', function(req, res){
   console.log('[SEARCH] Ingredients');
   res.type('application/json');
   res.send(404, {error: 'non implemete'})

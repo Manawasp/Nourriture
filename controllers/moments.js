@@ -63,7 +63,7 @@ router.patch('/:mid', function(req, res){
   res.type('application/json');
   Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
     if (moment) {
-      if (auth.user_id() == moment.create_by)
+      if (auth.user_id() == moment.create_by) {
         error = moment.update(req.body)
         if (error) {
           res.send(400, {error: error})
@@ -91,8 +91,8 @@ router.delete('/:mid', function(req, res){
   res.type('application/json');
   Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
     if (moment) {
-      if (auth.user_id() == moment.create_by)
-        Comment.find('_id': moment.comments).remove()
+      if (auth.user_id() == moment.create_by) {
+        Comment.find({'_id': moment.comments}).remove()
         moment.remove()
         res.send(200, {success: 'moment removed'})
       }
