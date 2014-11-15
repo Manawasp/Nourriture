@@ -118,7 +118,6 @@ describe('User Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal("password must contain at least one number (0-9)");
-        // expect(res.body).to.contain('world');
         done()
      });
     });
@@ -133,7 +132,6 @@ describe('User Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal("password must contain at least one lowercase letter (a-z)");
-        // expect(res.body).to.contain('world');
         done()
      });
     });
@@ -148,7 +146,6 @@ describe('User Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal("password must contain at least one uppercase letter (A-Z)");
-        // expect(res.body).to.contain('world');
         done()
      });
     });
@@ -162,8 +159,6 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        // expect(res.body.error).to.equal("password must contain at least one uppercase letter (A-Z)");
-        // expect(res.body).to.contain('world');
         done()
      });
     });
@@ -177,8 +172,19 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        // expect(res.body.error).to.equal("password must contain at least one uppercase letter (A-Z)");
-        // expect(res.body).to.contain('world');
+        done()
+     });
+    });
+
+   it ("200: create superadmin to test", function(done){
+     request
+      .post('localhost:8080/users')
+      .send('{"pseudo": "superadmin", "email": "superadmin@gmail.com", "password": "Superadmin59"}')
+      .set('Content-Type', 'application/json')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
         done()
      });
     });
@@ -193,7 +199,6 @@ describe('User Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal("this email is already taken");
-        // expect(res.body).to.contain('world');
         done()
       });
     });
@@ -317,13 +322,11 @@ describe('User Controller', function(){
         expect(res.body.user.id).to.exist;
         user1_id = res.body.user.id;
         user1_token = res.body.token
-        // expect(res.status).to.equal(400);
-        // expect(res.body).to.contain('world');
-       request
-        .post('localhost:8080/sessions')
-        .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
-        .set('Content-Type', 'application/json')
-        .end(function(res)
+        request
+          .post('localhost:8080/sessions')
+          .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
+          .set('Content-Type', 'application/json')
+          .end(function(res)
         {
           expect(res).to.exist;
           expect(res.status).to.equal(200);
@@ -332,8 +335,6 @@ describe('User Controller', function(){
           expect(res.body.user.id).to.exist;
           user2_id = res.body.user.id;
           user2_token = res.body.token
-          // expect(res.status).to.equal(400);
-          // expect(res.body).to.contain('world');
           done()
         });
       });
@@ -401,7 +402,7 @@ describe('User Controller', function(){
   });
 
 
-    describe('UPDATE User', function(){
+  describe('DELETE User', function(){
     var user1_token = "";
     var user1_id = undefined;
     var user2_token = "";
@@ -421,13 +422,11 @@ describe('User Controller', function(){
         expect(res.body.user.id).to.exist;
         user1_id = res.body.user.id;
         user1_token = res.body.token
-        // expect(res.status).to.equal(400);
-        // expect(res.body).to.contain('world');
-       request
-        .post('localhost:8080/sessions')
-        .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
-        .set('Content-Type', 'application/json')
-        .end(function(res)
+        request
+          .post('localhost:8080/sessions')
+          .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
+          .set('Content-Type', 'application/json')
+          .end(function(res)
         {
           expect(res).to.exist;
           expect(res.status).to.equal(200);
@@ -436,8 +435,6 @@ describe('User Controller', function(){
           expect(res.body.user.id).to.exist;
           user2_id = res.body.user.id;
           user2_token = res.body.token
-          // expect(res.status).to.equal(400);
-          // expect(res.body).to.contain('world');
           done()
         });
       });
@@ -487,7 +484,7 @@ describe('User Controller', function(){
       });
     });
 
-    it ("200: update user information", function(done){
+    it ("202: Delete user information", function(done){
      request
       .del('localhost:8080/users/' + user1_id)
       .set('Content-Type', 'application/json')
@@ -496,9 +493,109 @@ describe('User Controller', function(){
       .end(function(res)
       {
         expect(res).to.exist;
-        expect(res.status).to.equal(200);
+        expect(res.status).to.equal(202);
         expect(res.body.success).exist;
         expect(res.body.success).to.equal("non implemente")
+        done()
+      });
+    });
+  });
+
+  describe('SEARCH User', function(){
+    var user1_token = "";
+    var user1_id = undefined;
+
+    before(function(done){
+      request
+        .post('localhost:8080/sessions')
+        .send('{"email": "manawasp@gmail.com", "password": "Manawasp59"}')
+        .set('Content-Type', 'application/json')
+        .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.token).to.exist;
+        expect(res.body.user).to.exist;
+        expect(res.body.user.id).to.exist;
+        user1_id = res.body.user.id;
+        user1_token = res.body.token
+       done()
+      });
+    })
+
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/users/search')
+      .set('Content-Type', 'application/json')
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("you need to be connected");
+        done()
+      });
+    })
+
+    it ("200: search without pattern", function(done){
+     request
+      .post('localhost:8080/users/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.users).to.exist;
+        expect(res.body.users.length).to.equal(3);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(3);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        expect(res.body.limit).to.be.an('number');
+        done()
+      });
+    });
+
+    it ("200: search with pattern", function(done){
+     request
+      .post('localhost:8080/users/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"pseudo":"manawasp2"}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.users).to.exist;
+        expect(res.body.users.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
+        expect(res.body.limit).to.be.an('number');
+        done()
+      });
+    });
+
+    it ("200: search with pattern + offset + limit", function(done){
+     request
+      .post('localhost:8080/users/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user1_token)
+      .send('{"pseudo":"manawasp2","offset":10,"limit":2}')
+      .end(function(res)
+      {
+        expect(res.status).to.equal(200);
+        expect(res.body.users).to.exist;
+        expect(res.body.users.length).to.equal(0);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(0);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(10);
+        expect(res.body.limit).to.exist;
+        expect(res.body.limit).to.equal(2);
         done()
       });
     });

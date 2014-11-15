@@ -37,10 +37,9 @@ router.post('/', function(req, res){
       // Retrieve user cible
       if (req.body.user_id != undefined) {
         User.findOne({'_id': req.body.user_id}, '', function (err, user_cible) {
-          if (user_cible) {
+          if (user_cible && user_cible._id != current_user._id) {
             error = current_user.follow(user_cible._id) || user_cible.followed_by(current_user._id)
             if (error == null) {
-              console.log(current_user.followers)
               current_user.save()
               user_cible.save()
               res.send(200, user_cible.information())

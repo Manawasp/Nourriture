@@ -32,18 +32,20 @@ router.use(function(req, res, next) {
  * [SEARCH] User Collection
  */
 
-router.get('/', function(req, res){
+router.post('/search', function(req, res){
   console.log('[SEARCH] User');
   res.type('application/json');
   params = req.body
   if (typeof params.pseudo == 'string') {
     var re = new RegExp(params.pseudo, 'i');
-    query = User.find({'name': re})
+    query = User.find({'pseudo': re})
   } else {
     query = User.find({})
   }
   offset = 0
   limit = 21
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 20) {limit = params.limit}
   query.skip(offset).limit(limit)
   query.exec(function (err, users) {
     data_user = []
@@ -141,7 +143,7 @@ router.delete('/:uid', function(req, res){
       {
         error = u.update_information(req.body)
         if (error == null) {
-          res.send(200, {success: "non implemente"})
+          res.send(202, {success: "non implemente"})
         }
         else {
           res.send(400, {error: error})

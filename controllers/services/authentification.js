@@ -42,10 +42,18 @@ exports.verify = function(token) {
       else {
         user_id = decoded.id
         if (decoded.access) {
-          if (decoded.access.indexOf('consumer') != -1) {access_consumer = true}
-          if (decoded.access.indexOf('supplier') != -1) {access_supplier = true}
-          if (decoded.access.indexOf('gastronomist') != -1) {access_gastronomist = true}
-          if (decoded.access.indexOf('admin') != -1) {access_admin = true}
+          if (decoded.access.indexOf('consumer') != -1) {
+            access_consumer = true
+          } else {access_consumer = false}
+          if (decoded.access.indexOf('supplier') != -1) {
+            access_supplier = true
+          } else {access_supplier = false}
+          if (decoded.access.indexOf('gastronomist') != -1) {
+            access_gastronomist = true
+          } else {access_gastronomist = false}
+          if (decoded.access.indexOf('admin') != -1) {
+            access_admin = true
+          } else {access_admin = false}
         }
       }
     });

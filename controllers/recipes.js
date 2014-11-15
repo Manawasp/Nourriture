@@ -8,6 +8,7 @@ var express     = require('express')
   , mongoose    = require('mongoose')
   , User        = mongoose.model('User')
   , Ingredient  = mongoose.model('Ingredient')
+  , Comment      = mongoose.model('Comment')
   , Recipe      = mongoose.model('Recipe')
   , auth      = require('./services/authentification');
  
@@ -155,7 +156,7 @@ router.delete('/:rid', function(req, res){
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
       if (auth.access_admin() || recipe._id == auth.user_id()) {
-        Comment.find({'_id': recipe.comments}).remove()
+        // Comment.find({'_id': recipe.comments}).remove()
         recipe.remove()
         res.send(200, {success: 'recipe removed'})
       }

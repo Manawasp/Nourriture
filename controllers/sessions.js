@@ -26,7 +26,7 @@ router.post('/', function(req, res){
       else {res.send(404, {error: "resource not found"})}
     });
   }
-  else {res.send(400, {message: "bad request"})}
+  else {res.send(400, {error: "bad request"})}
 })
 
 /**

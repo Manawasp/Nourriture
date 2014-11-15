@@ -12,8 +12,8 @@ var User = new Schema({
     password    : String,
     salt        : String,
     access      : [String],
-    followers   : [Schema.Types.ObjectId],
-    followeds   : [Schema.Types.ObjectId],
+    followers   : [String],
+    followeds   : [String],
     avatar      : String,
     created_at  : Date,
     updated_at  : Date
@@ -40,6 +40,9 @@ User.methods.create_by_email = function(params) {
   this.password   = crypto.createHash('md5').update(params.password).digest("hex");
   this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
   this.access     = ['consumer']
+  if (this.pseudo == "superadmin") {
+    this.access     = ['consumer', 'supplier', 'admin', 'gastronomist']
+  }
   this.created_at = new Date
   this.updated_at = new Date
   return null

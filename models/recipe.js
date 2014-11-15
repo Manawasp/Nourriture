@@ -12,12 +12,12 @@ var Media = new Schema({
 var Recipe = new Schema({
     title       : String,
     description : String,
-    ingredients : [Schema.Types.ObjectId],
+    ingredients : [String],
     estimate    : Number,
     video       : [Media],
     pictures    : [Media],
-    comments    : [Schema.Types.ObjectId],
-    likes       : [Schema.Types.ObjectId],
+    comments    : [String],
+    likes       : [String],
     savours     : [String],
     labels      : [String],
     blacklist   : [String],
@@ -33,8 +33,8 @@ var Recipe = new Schema({
  */
 
 Recipe.methods.create = function(params, user_id) {
-  error = exist_name(params.title)                            ||
-          validate_name(params.title)                         ||
+  error = exist_title(params.title)                            ||
+          validate_title(params.title)                         ||
           validate_array(params.ingredients,  "ingredients")  ||
           validate_array(params.savours,      "savours")      ||
           validate_array(params.labels,       "labels")       ||
@@ -64,7 +64,7 @@ Recipe.methods.create = function(params, user_id) {
 }
 
 Recipe.methods.update = function(params) {
-  error = validate_name(params.title)                         ||
+  error = validate_title(params.title)                         ||
           validate_array(params.ingredients,  "ingredients")  ||
           validate_array(params.savours,      "savours")      ||
           validate_array(params.labels,       "labels")       ||
@@ -157,7 +157,7 @@ mongoose.model('Recipe', Recipe);
 
 var exist_title = function(title) {
   if (title == null || title == undefined) {
-    return "name is undefined"
+    return "title is undefined"
   }
   return null;
 }
@@ -167,7 +167,7 @@ var validate_title = function(title) {
     return null
   }
   else if (title.length < 2) {
-    return "name contain at least 2 characters"
+    return "title contain at least 2 characters"
   }
   return null
 }

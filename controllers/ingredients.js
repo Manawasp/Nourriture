@@ -71,7 +71,7 @@ router.post('/search', function(req, res){
 router.post('/', function(req, res){
   console.log("[CREATE] Ingredients");
   res.type('application/json');
-  if (auth.access_supplier()) {
+  if (auth.access_supplier() == true) {
     ingredient = new Ingredient;
     error = ingredient.create(req.body, auth.user_id())
     if (error) {
