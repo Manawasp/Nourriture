@@ -43,9 +43,15 @@ router.post('/', function(req, res){
 
 router.get('/:mid', function(req, res){
   console.log('[GET] Moment');
-  // res.type('application/json');
-  // res.send(200, usersResponse);
-  res.json({ message: 'hooray! welcome to our api!' }); 
+  res.type('application/json');
+  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+    if (moment) {
+      show_moment(moment, res)
+    }
+    else {
+      res.send(404, {error: 'resource not found'})
+    }
+  });
 })
 
 /**
@@ -53,9 +59,27 @@ router.get('/:mid', function(req, res){
  */
 
 router.patch('/:mid', function(req, res){
-    console.log('[UPDATE] Moment');
-    res.type('application/json');
-    res.send(200, {message: "Non implemete"});
+  console.log('[UPDATE] Moment');
+  res.type('application/json');
+  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+    if (moment) {
+      if (auth.user_id() == moment.create_by)
+        error = moment.update(req.body)
+        if (error) {
+          res.send(400, {error: error})
+        }
+        else {
+          valid_create_moment(moment, res)
+        }
+      }
+      else {
+        res.send(403, {error: "you don't have the permission"})
+      }
+    }
+    else {
+      res.send(404, {error: 'resource not found'})
+    }
+  });
 })
 
 /**
@@ -63,9 +87,23 @@ router.patch('/:mid', function(req, res){
  */
 
 router.delete('/:mid', function(req, res){
-    console.log('[DELETE] Moment');
-    res.type('application/json');
-    res.send(200, {message: "Non implemete"});
+  console.log('[DELETE] Moment');
+  res.type('application/json');
+  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+    if (moment) {
+      if (auth.user_id() == moment.create_by)
+        Comment.find('_id': moment.comments).remove()
+        moment.remove()
+        res.send(200, {success: 'moment removed'})
+      }
+      else {
+        res.send(403, {error: "you don't have the permission"})
+      }
+    }
+    else {
+      res.send(404, {error: 'resource not found'})
+    }
+  });
 })
 
 /**
@@ -110,7 +148,5 @@ var show_moment = function(moment, res) {
                       moment: data_moment})
       });
     });
-    //     res.send(200, {user: data_user, ingredients: data_ingredient, moment: data_recipe})
-    // }
   });
 }
