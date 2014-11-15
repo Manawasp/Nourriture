@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
  
 require('./models/user')
+require('./models/comment')
 require('./models/ingredient')
 require('./models/moment')
 require('./models/recipe')
