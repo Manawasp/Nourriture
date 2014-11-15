@@ -113,6 +113,7 @@ router.delete('/:rid', function(req, res){
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
       if (auth.access_admin() || recipe._id == auth.user_id()) {
+        Comment.find('_id': recipe.comments).remove()
         recipe.remove()
         res.send(200, {success: 'recipe removed'})
       }
