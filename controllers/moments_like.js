@@ -29,16 +29,17 @@ router.use(function(req, res, next) {
  * [POST] Like Moment
  */
 
-router.post('/', function(req, res){
+router.post('/:mid', function(req, res){
   console.log("[CREATE] Moment Like");
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      error = moment.like(auth_user_id())
+      error = moment.like(auth.user_id())
       if (error) {
         res.send(400, {error: error})
       }
       else {
+        moment.save()
         res.send(200, {success: 'you like the moment'})
       }
     }
@@ -52,16 +53,17 @@ router.post('/', function(req, res){
  * [DELETE] Unlike Moment
  */
 
-router.delete('/', function(req, res){
+router.delete('/:mid', function(req, res){
   console.log('[DELETE] Moment Like');
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      error = moment.unlike(auth_user_id())
+      error = moment.unlike(auth.user_id())
       if (error) {
         res.send(400, {error: error})
       }
       else {
+        moment.save()
         res.send(200, {success: 'you unlike the moment'})
       }
     }

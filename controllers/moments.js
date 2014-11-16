@@ -3,12 +3,14 @@
  * Static var
  */
 
-var express   = require('express')
-  , router    = express.Router()
-  , mongoose  = require('mongoose')
-  , User      = mongoose.model('User')
-  , Moment    = mongoose.model('Moment')
-  , auth      = require('./services/authentification');
+var express     = require('express')
+  , router      = express.Router()
+  , mongoose    = require('mongoose')
+  , User        = mongoose.model('User')
+  , Moment      = mongoose.model('Moment')
+  , Ingredient  = mongoose.model('Ingredient')
+  , Comment     = mongoose.model('Comment')
+  , auth        = require('./services/authentification');
  
 /**
  * Router middleware
@@ -36,10 +38,10 @@ router.post('/search', function(req, res){
   offset = 0
   limit = 5
   if (typeof params.user_id == 'string') {
-    query = Moment.find({'create_by': params.user_id})
+    query = Moment.find({'created_by': params.user_id})
   }
   else {
-    query = Moment.find({'create_by': auth.user_id()})
+    query = Moment.find({'created_by': auth.user_id()})
   }
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 10) {limit = params.limit}
@@ -82,7 +84,7 @@ router.post('/', function(req, res){
 router.get('/:mid', function(req, res){
   console.log('[GET] Moment');
   res.type('application/json');
-  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+  Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
       show_moment(moment, res)
     }
@@ -99,9 +101,9 @@ router.get('/:mid', function(req, res){
 router.patch('/:mid', function(req, res){
   console.log('[UPDATE] Moment');
   res.type('application/json');
-  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+  Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      if (auth.user_id() == moment.create_by) {
+      if (auth.user_id() == moment.created_by) {
         error = moment.update(req.body)
         if (error) {
           res.send(400, {error: error})
@@ -127,10 +129,10 @@ router.patch('/:mid', function(req, res){
 router.delete('/:mid', function(req, res){
   console.log('[DELETE] Moment');
   res.type('application/json');
-  Moment.findOne({'_id': body.params.mid}, '', function(err, moment) {
+  Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      if (auth.user_id() == moment.create_by) {
-        Comment.find({'_id': moment.comments}).remove()
+      if (auth.user_id() == moment.created_by) {
+        // Comment.find({'_id': moment.comments}).remove()
         moment.remove()
         res.send(200, {success: 'moment removed'})
       }

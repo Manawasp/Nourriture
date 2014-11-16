@@ -64,12 +64,12 @@ Moment.methods.update = function(params) {
  * Comments Method
  */
 
-Moment.methods.add_comments = function(comment_id) {
+Moment.methods.add_comment = function(comment_id) {
   this.comments.push(comment_id)
   return null
 }
 
-Moment.methods.remove_comments = function(comment_id) {
+Moment.methods.remove_comment = function(comment_id) {
   index_tab = this.comments.indexOf(comment_id)
   if (index_tab == -1) {
     return "not found comment"
@@ -85,7 +85,7 @@ Moment.methods.remove_comments = function(comment_id) {
 
 Moment.methods.like = function(user_id) {
   if (this.likes.indexOf(user_id) != -1) {
-    return "you already like this recipe"
+    return "you already like this moment"
   } else {
     this.likes.push(user_id)
     return null
@@ -95,7 +95,7 @@ Moment.methods.like = function(user_id) {
 Moment.methods.unlike = function(user_id) {
   index_tab = this.likes.indexOf(user_id)
   if (index_tab == -1) {
-    return "you don't like this recipe"
+    return "you don't like this moment"
   } else {
     this.likes.splice(index_tab, 1)
     return null

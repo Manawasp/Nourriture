@@ -30,7 +30,7 @@ router.use(function(req, res, next) {
  * [SEARCH] Moments Comments Collection
  */
 
-router.post('/search', function(req, res){
+router.post('/:mid/search', function(req, res){
   console.log('[SEARCH] Moments Comments');
   res.type('application/json');
   params = req.body
@@ -58,7 +58,7 @@ router.post('/search', function(req, res){
  * [POST] Moments Comments Collection
  */
 
-router.post('/', function(req, res){
+router.post('/:mid', function(req, res){
   console.log("[CREATE] Moments Comments");
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
@@ -71,7 +71,7 @@ router.post('/', function(req, res){
       else {
         moment.add_comment(comment._id)
         comment.save()
-        show_comment(comment)
+        show_comment(comment, res)
       }
     }
     else {
@@ -84,12 +84,12 @@ router.post('/', function(req, res){
  * [GET] Moments Comments
  */
 
-router.get('/:cid', function(req, res){
+router.get('/:mid/:cid', function(req, res){
   console.log('[GET] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
     if (comment) {
-      show_comment(comment)
+      show_comment(comment, res)
     }
     else {
       res.send(404, {error: 'resource not found'})
@@ -101,7 +101,7 @@ router.get('/:cid', function(req, res){
  * [UPDATE] Moments Comments
  */
 
-router.patch('/:cid', function(req, res){
+router.patch('/:mid/:cid', function(req, res){
   console.log('[UPDATE] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
@@ -112,7 +112,7 @@ router.patch('/:cid', function(req, res){
           res.send(400, {error: error})
         } else {
           comment.save()
-          show_comment(comment)
+          show_comment(comment, res)
         }
       } else {
         res.send(403, {error: "you don't have the permission"})
@@ -128,7 +128,7 @@ router.patch('/:cid', function(req, res){
  * [DELETE] Moments Comments
  */
 
-router.delete('/:cid', function(req, res){
+router.delete('/:mid/:cid', function(req, res){
   console.log('[DELETE] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
