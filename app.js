@@ -17,11 +17,11 @@ var express     = require('express')
 
 
 /**
- * global var 
+ * global var
  */
 
 var app         = express()
-  , port        = process.env.PORT || 8080;
+  , port        = process.env.PORT || 5000;
 
 /**
  * init parser json
