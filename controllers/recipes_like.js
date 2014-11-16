@@ -30,7 +30,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/:rid', function(req, res){
-  console.log("[CREATE] Recipe Like");
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
@@ -54,7 +53,6 @@ router.post('/:rid', function(req, res){
  */
 
 router.delete('/:rid', function(req, res){
-  console.log('[DELETE] Recipe Like');
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {

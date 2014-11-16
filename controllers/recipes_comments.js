@@ -31,7 +31,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/:rid/search', function(req, res){
-  console.log('[SEARCH] Recipes Comments');
   res.type('application/json');
   params = req.body
   query = Comment.find({'ref_id': req.params.rid})
@@ -59,7 +58,6 @@ router.post('/:rid/search', function(req, res){
  */
 
 router.post('/:rid', function(req, res){
-  console.log("[CREATE] Recipes Comments");
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
@@ -85,7 +83,6 @@ router.post('/:rid', function(req, res){
  */
 
 router.get('/:rid/:mid', function(req, res){
-  console.log('[GET] Recipes Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
@@ -102,7 +99,6 @@ router.get('/:rid/:mid', function(req, res){
  */
 
 router.patch('/:rid/:mid', function(req, res){
-  console.log('[UPDATE] Recipes Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
@@ -129,7 +125,6 @@ router.patch('/:rid/:mid', function(req, res){
  */
 
 router.delete('/:rid/:mid', function(req, res){
-  console.log('[DELETE] Recipes Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {

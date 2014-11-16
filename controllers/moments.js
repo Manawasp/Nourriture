@@ -32,7 +32,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/search', function(req, res){
-  console.log('[SEARCH] Moment');
   res.type('application/json');
   params = req.body
   offset = 0
@@ -65,7 +64,6 @@ router.post('/search', function(req, res){
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] Moment");
   res.type('application/json');
   moment = new Moment;
   error = moment.create(req.body, auth.user_id())
@@ -82,7 +80,6 @@ router.post('/', function(req, res){
  */
 
 router.get('/:mid', function(req, res){
-  console.log('[GET] Moment');
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
@@ -99,7 +96,6 @@ router.get('/:mid', function(req, res){
  */
 
 router.patch('/:mid', function(req, res){
-  console.log('[UPDATE] Moment');
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
@@ -127,7 +123,6 @@ router.patch('/:mid', function(req, res){
  */
 
 router.delete('/:mid', function(req, res){
-  console.log('[DELETE] Moment');
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {

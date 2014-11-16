@@ -30,7 +30,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/:mid', function(req, res){
-  console.log("[CREATE] Moment Like");
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
@@ -54,7 +53,6 @@ router.post('/:mid', function(req, res){
  */
 
 router.delete('/:mid', function(req, res){
-  console.log('[DELETE] Moment Like');
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {

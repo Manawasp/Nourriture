@@ -13,7 +13,6 @@ var express   = require('express')
  */
 
 router.post('/', function(req, res){
-  console.log('[CREATE] Session');
   res.type('application/json');
   if (req.body.email && req.body.password) {
     User.findOne({'email': req.body.email}, '', function (err, user_cible) {
@@ -34,7 +33,6 @@ router.post('/', function(req, res){
  */
 
 router.delete('/', function(req, res){
-  console.log("[POST] Sessions");
   res.type('application/json');
   res.send(200, {message: "Non implemete"});
 })

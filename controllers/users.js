@@ -33,7 +33,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/search', function(req, res){
-  console.log('[SEARCH] User');
   res.type('application/json');
   params = req.body
   if (typeof params.pseudo == 'string') {
@@ -66,7 +65,6 @@ router.post('/search', function(req, res){
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] User");
   res.type('application/json');
   user = new User;
   error = user.create_by_email(req.body)
@@ -83,7 +81,6 @@ router.post('/', function(req, res){
  */
 
 router.get('/:uid', function(req, res){
-  console.log('[GET] User')
   res.type('application/json')
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
@@ -105,7 +102,6 @@ router.get('/:uid', function(req, res){
  */
 
 router.patch('/:uid', function(req, res){
-  console.log('[UPDATE] User');
   res.type('application/json');
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
@@ -135,7 +131,6 @@ router.patch('/:uid', function(req, res){
  */
 
 router.delete('/:uid', function(req, res){
-  console.log('[DELETE] User');
   res.type('application/json');
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {

@@ -29,7 +29,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/', function(req, res){
-  console.log('[CREATE] Follow specific user !');
   // Retrieve Current User
   res.type('application/json');
   User.findOne({'_id': auth.user_id()}, '', function (err, current_user) {
@@ -60,7 +59,6 @@ router.post('/', function(req, res){
  */
 
 router.get('/:uid', function(req, res){
-  console.log('[GET] Get follower list');
   res.type('application/json');
   User.findOne({'_id': req.params.uid}, '', function (err, user_cible) {
     if (user_cible) {
@@ -83,7 +81,6 @@ router.get('/:uid', function(req, res){
  */
 
 router.delete('/:uid', function(req, res){
-  console.log('[DELETE] Follow specific user !');
   // Retrieve Current User
   res.type('application/json');
   User.findOne({'_id': auth.user_id()}, '', function (err, current_user) {

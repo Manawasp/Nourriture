@@ -32,7 +32,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/search', function(req, res){
-  console.log('[SEARCH] Recipes');
   res.type('application/json');
   res.type('application/json')
   params = req.body
@@ -84,7 +83,6 @@ router.post('/search', function(req, res){
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] Recipes");
   res.type('application/json');
   if (auth.access_gastronomist()) {
     recipe = new Recipe;
@@ -106,7 +104,6 @@ router.post('/', function(req, res){
  */
 
 router.get('/:rid', function(req, res){
-  console.log('[GET] Recipes');
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
@@ -123,7 +120,6 @@ router.get('/:rid', function(req, res){
  */
 
 router.patch('/:rid', function(req, res){
-  console.log('[UPDATE] Recipes');
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
@@ -151,7 +147,6 @@ router.patch('/:rid', function(req, res){
  */
 
 router.delete('/:rid', function(req, res){
-  console.log('[DELETE] Recipes');
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {

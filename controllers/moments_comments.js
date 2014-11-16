@@ -31,7 +31,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/:mid/search', function(req, res){
-  console.log('[SEARCH] Moments Comments');
   res.type('application/json');
   params = req.body
   query = Comment.find({'ref_id': req.params.mid})
@@ -59,7 +58,6 @@ router.post('/:mid/search', function(req, res){
  */
 
 router.post('/:mid', function(req, res){
-  console.log("[CREATE] Moments Comments");
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
@@ -85,7 +83,6 @@ router.post('/:mid', function(req, res){
  */
 
 router.get('/:mid/:cid', function(req, res){
-  console.log('[GET] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
     if (comment) {
@@ -102,7 +99,6 @@ router.get('/:mid/:cid', function(req, res){
  */
 
 router.patch('/:mid/:cid', function(req, res){
-  console.log('[UPDATE] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
     if (comment) {
@@ -129,7 +125,6 @@ router.patch('/:mid/:cid', function(req, res){
  */
 
 router.delete('/:mid/:cid', function(req, res){
-  console.log('[DELETE] Moments Comments');
   res.type('application/json');
   Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
     if (comment) {

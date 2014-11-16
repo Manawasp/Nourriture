@@ -30,7 +30,6 @@ router.use(function(req, res, next) {
  */
 
 router.post('/search', function(req, res){
-  console.log('[SEARCH] Ingredients')
   res.type('application/json')
   params = req.body
   if (typeof params.name == 'string') {
@@ -69,7 +68,6 @@ router.post('/search', function(req, res){
  */
 
 router.post('/', function(req, res){
-  console.log("[CREATE] Ingredients");
   res.type('application/json');
   if (auth.access_supplier() == true) {
     ingredient = new Ingredient;
@@ -91,7 +89,6 @@ router.post('/', function(req, res){
  */
 
 router.get('/:uid', function(req, res){
-  console.log('[GET] Ingredients');
   Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
     if (ingredient) {
       res.send(200, ingredient.information())
@@ -107,7 +104,6 @@ router.get('/:uid', function(req, res){
  */
 
 router.patch('/:uid', function(req, res){
-  console.log('[UPDATE] Ingredients');
   res.type('application/json');
   if (auth.access_supplier()) {
     Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
@@ -135,7 +131,6 @@ router.patch('/:uid', function(req, res){
  */
 
 router.delete('/:uid', function(req, res){
-  console.log('[DELETE] Ingredients');
   res.type('application/json');
   if (auth.access_supplier()) {
     Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
