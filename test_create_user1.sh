@@ -4,7 +4,7 @@
 # FILE:     test.sh
 # ROLE:     TODO (some explanation)
 # CREATED:  2014-11-14 08:00:36
-# MODIFIED: 2014-11-14 21:57:19
+# MODIFIED: 2014-11-16 12:59:52
 
-curl -X POST -H "Content-Type: application/json" -d '{"pseudo":"manawasp","password":"SuperMana59","email":"clovss.mna1@gmail.com"}' http://localhost:8080/users
+curl -X POST -H "Content-Type: application/json" -d '{"pseudo":"manawasp","password":"SuperMana59","email":"clovss.mna1@gmail.com"}' http://54.173.252.245:8080/Nourriture/users
 echo ''
