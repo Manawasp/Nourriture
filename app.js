@@ -21,7 +21,7 @@ var express     = require('express')
  */
 
 var app         = express()
-  , port        = process.env.PORT || 5000;
+  , port        = process.env.PORT || 8080;
 
 /**
  * init parser json
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 /**
  * Initialization
  */
-
+app.get('')
 app.use(require('./controllers'));
 
 /**
