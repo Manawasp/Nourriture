@@ -30,7 +30,7 @@ router.use(function(req, res, next) {
  * [SEARCH] Recipes Comments Collection
  */
 
-router.post('/:mid/search', function(req, res){
+router.post('/:rid/search', function(req, res){
   console.log('[SEARCH] Recipes Comments');
   res.type('application/json');
   params = req.body

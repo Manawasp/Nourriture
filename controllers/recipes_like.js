@@ -29,16 +29,17 @@ router.use(function(req, res, next) {
  * [POST] Like Moment
  */
 
-router.post('/', function(req, res){
+router.post('/:rid', function(req, res){
   console.log("[CREATE] Recipe Like");
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
-      error = recipe.like(auth_user_id())
+      error = recipe.like(auth.user_id())
       if (error) {
         res.send(400, {error: error})
       }
       else {
+        recipe.save()
         res.send(200, {success: 'you like the recipe'})
       }
     }
@@ -52,16 +53,17 @@ router.post('/', function(req, res){
  * [DELETE] Unlike Moment
  */
 
-router.delete('/', function(req, res){
+router.delete('/:rid', function(req, res){
   console.log('[DELETE] Recipe Like');
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
-      error = recipe.unlike(auth_user_id())
+      error = recipe.unlike(auth.user_id())
       if (error) {
         res.send(400, {error: error})
       }
       else {
+        recipe.save()
         res.send(200, {success: 'you unlike the recipe'})
       }
     }

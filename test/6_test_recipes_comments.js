@@ -298,9 +298,26 @@ describe('RecipesComments Controller', function(){
 
   describe('SEARCH RecipesComments', function(){
 
+    it ("200: user post comment in recipe", function(done){
+     request
+      .post('localhost:8080/comments/recipes/' + recipe_id)
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', user2_token)
+      .send('{"comment": "Hello"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.id).to.be.an('string');
+        expect(res.body.created_by).to.be.an('string');
+        comment_id = res.body.id;
+        done()
+      });
+    });
+
     it ("401: unhautorized if not connected", function(done){
      request
-      .del('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
+      .post('localhost:8080/comments/recipes/' + recipe_id + '/search')
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -312,32 +329,44 @@ describe('RecipesComments Controller', function(){
       });
     });
 
-    it ("403: not the creator", function(done){
+    it ("200: search with unvalid recipes", function(done){
      request
-      .del('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
+      .post('localhost:8080/comments/recipes/okdwopkwpdok/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', user1_token)
       .send('{}')
       .end(function(res)
       {
         expect(res).to.exist;
-        expect(res.status).to.equal(403);
-        expect(res.body.error).to.equal("you don't have the permission");
+        expect(res.status).to.equal(200);
+        expect(res.body.comments).to.exist;
+        expect(res.body.comments.length).to.equal(0);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(0);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
         done()
       });
     });
 
-    it ("404: resource not found", function(done){
+    it ("200: search with valid recipes", function(done){
      request
-      .del('localhost:8080/comments/recipes/' + recipe_id + '/wijowidj')
+      .post('localhost:8080/comments/recipes/' + recipe_id + '/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', user1_token)
       .send('{}')
       .end(function(res)
       {
         expect(res).to.exist;
-        expect(res.status).to.equal(404);
-        expect(res.body.error).to.equal("resource not found");
+        expect(res.status).to.equal(200);
+        expect(res.body.comments).to.exist;
+        expect(res.body.comments.length).to.equal(1);
+        expect(res.body.size).to.exist;
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.exist;
+        expect(res.body.offset).to.equal(0);
+        expect(res.body.limit).to.exist;
         done()
       });
     });
