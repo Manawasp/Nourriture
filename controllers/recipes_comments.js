@@ -30,7 +30,7 @@ router.use(function(req, res, next) {
  * [SEARCH] Recipes Comments Collection
  */
 
-router.post('/search', function(req, res){
+router.post('/:mid/search', function(req, res){
   console.log('[SEARCH] Recipes Comments');
   res.type('application/json');
   params = req.body
@@ -58,7 +58,7 @@ router.post('/search', function(req, res){
  * [POST] Recipes Comments Collection
  */
 
-router.post('/', function(req, res){
+router.post('/:rid', function(req, res){
   console.log("[CREATE] Recipes Comments");
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
@@ -71,7 +71,7 @@ router.post('/', function(req, res){
       else {
         recipe.add_comment(comment._id)
         comment.save()
-        show_comment(comment)
+        show_comment(comment, res)
       }
     }
     else {
@@ -84,12 +84,12 @@ router.post('/', function(req, res){
  * [GET] Recipes Comments
  */
 
-router.get('/:cid', function(req, res){
+router.get('/:rid/:mid', function(req, res){
   console.log('[GET] Recipes Comments');
   res.type('application/json');
-  Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
+  Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
-      show_comment(comment)
+      show_comment(comment, res)
     }
     else {
       res.send(404, {error: 'resource not found'})
@@ -101,10 +101,10 @@ router.get('/:cid', function(req, res){
  * [UPDATE] Recipes Comments
  */
 
-router.patch('/:cid', function(req, res){
+router.patch('/:rid/:mid', function(req, res){
   console.log('[UPDATE] Recipes Comments');
   res.type('application/json');
-  Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
+  Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
       if (auth.user_id() == comment.created_by) {
         error = comment.update(req.body)
@@ -112,7 +112,7 @@ router.patch('/:cid', function(req, res){
           res.send(400, {error: error})
         } else {
           comment.save()
-          show_comment(comment)
+          show_comment(comment, res)
         }
       } else {
         res.send(403, {error: "you don't have the permission"})
@@ -128,10 +128,10 @@ router.patch('/:cid', function(req, res){
  * [DELETE] Recipes Comments
  */
 
-router.delete('/:cid', function(req, res){
+router.delete('/:rid/:mid', function(req, res){
   console.log('[DELETE] Recipes Comments');
   res.type('application/json');
-  Comment.findOne({'_id': req.params.cid}, '', function(err, comment) {
+  Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
       if (auth.user_id() == comment.created_by) {
         comment.remove()

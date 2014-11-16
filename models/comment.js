@@ -48,7 +48,7 @@ Comment.methods.update = function(params) {
 Comment.methods.information = function() {
   return {id:           this._id,
           comment:      this.comment,
-          user_id:      this.user_id,
+          created_by:   this.created_by,
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }

@@ -91,12 +91,12 @@ Recipe.methods.update = function(params) {
  * Comments Method
  */
 
-Recipe.methods.add_comments = function(comment_id) {
+Recipe.methods.add_comment = function(comment_id) {
   this.comments.push(comment_id)
   return null
 }
 
-Recipe.methods.remove_comments = function(comment_id) {
+Recipe.methods.remove_comment = function(comment_id) {
   index_tab = this.comments.indexOf(comment_id)
   if (index_tab == -1) {
     return "not found comment"

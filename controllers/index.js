@@ -10,6 +10,6 @@ router.use('/recipes',      require('./recipes'));
 router.use('/recipes/:rid/like',   require('./recipes_like'));
 router.use('/moments/:mid/like',    require('./moments_like'));
 router.use('/moments/:mid/comments',require('./moments_comments'));
-router.use('/recipes/:mid/comments',require('./recipes_comments'));
+router.use('/comments/recipes/',	require('./recipes_comments'));
 
 module.exports = router
