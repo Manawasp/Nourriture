@@ -1,0 +1,40 @@
+
+<div class="container">
+	<div class="col-md-3">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Personal setting</h3>
+			</div>
+			<div class="panel-body">
+				<div class="list-group">
+					<a href="" ng-click="selection=1" class="list-group-item active">
+						Information
+					</a>
+					<a href="" ng-click="selection=2" class="list-group-item">Account setting</a>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<div class="col-md-9">
+		<div class="content" ng-switch on="selection">
+			<div ng-switch-when="1" >
+				<div ng-include src="template.info"></div ng-include>
+			</div>
+			<div ng-switch-when="2">
+				<div ng-include src="template.account"></div ng-include>
+			</div>
+			<div ng-switch-default>
+				<div ng-include src="template.info"></div ng-include>
+			</div>
+		</div>
+		<!--<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Information</h3>
+			</div>
+			<div class="panel-body">
+				<div ng-view=""></div>
+			</div>
+		</div>-->
+	</div>
+</div>
