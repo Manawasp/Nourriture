@@ -29,7 +29,7 @@ var express     = require('express')
 
 
 /**
- * global var 
+ * global var
  */
 
 var app         = express()
@@ -46,7 +46,7 @@ app.use(allowCrossDomain);
 /**
  * Initialization
  */
-
+app.get('')
 app.use(require('./controllers'));
 
 /**
