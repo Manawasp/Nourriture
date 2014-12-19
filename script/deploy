@@ -1,0 +1,7 @@
+ssh ubuntu@54.173.252.245 <<EOF
+	cd /opt/apache-tomcat-8.0.15/webapps/Nourriture
+	git pull
+	npm install --production
+	forever restartall
+	exit
+	EOF
