@@ -177,7 +177,7 @@ var show_moment = function(moment, res) {
             users_data.push(users[i].information())
           }
         }
-        res.send(200, {create_by: create_by, 
+        res.send(200, {created_by: create_by, 
                       ingredients: data_ingredient,
                       users: users_data, 
                       moment: data_moment})
