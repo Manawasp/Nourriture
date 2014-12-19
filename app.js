@@ -15,6 +15,18 @@ var express     = require('express')
   , db          = require('./db')
   , bodyParser  = require('body-parser');
 
+/**
+ * CORS middleware
+ */
+
+ var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Auth-Token');
+
+    next();
+}
+
 
 /**
  * global var 
@@ -29,6 +41,7 @@ var app         = express()
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(allowCrossDomain);
 
 /**
  * Initialization
