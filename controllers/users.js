@@ -109,8 +109,7 @@ router.patch('/:uid', function(req, res){
       {
         error = u.update_information(req.body)
         if (error == null) {
-          u.save()
-          res.send(200, u.personal_information())
+          uniqueness_email(u, res, valide_create)
         }
         else {
           res.send(400, {error: error})
@@ -136,13 +135,7 @@ router.delete('/:uid', function(req, res){
     if (u) {
       if (u._id == auth.user_id())
       {
-        error = u.update_information(req.body)
-        if (error == null) {
-          res.send(202, {success: "non implemente"})
-        }
-        else {
-          res.send(400, {error: error})
-        }
+        res.send(202, {success: "non implemente"})
       }
       else {
         res.send(403, {error: "you don't have the permission"})
