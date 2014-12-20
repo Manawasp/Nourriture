@@ -11,6 +11,7 @@
     "jsonwebtoken": "*",
     "mocha": "*",
     "superagent": "*",
-    "expect.js": "*"
+    "expect.js": "*",
+    "cors": "*"
   }
 }

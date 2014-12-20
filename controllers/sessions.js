@@ -13,9 +13,6 @@ var express   = require('express')
  */
 
 router.post('/', function(req, res){
-  console.log(req.body)
-  console.log(req.body.email)
-  console.log(req.body.password)
   res.type('application/json');
   if (req.body.email && req.body.password) {
     User.findOne({'email': req.body.email}, '', function (err, user_cible) {
