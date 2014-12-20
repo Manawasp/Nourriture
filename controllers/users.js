@@ -14,9 +14,12 @@ var express   = require('express')
  */
 
 router.use(function(req, res, next) {
+  console.log(req.headers)
   if (req.path == '/') {
     next()
   } else {
+    console.log(req.header('Auth-Token'))
+    console.log(req.header('Content-Type'))
     error = auth.verify(req.header('Auth-Token'))
     if (error != null) {
       res.type('application/json');
