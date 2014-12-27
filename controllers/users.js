@@ -14,7 +14,6 @@ var express   = require('express')
  */
 
 router.use(function(req, res, next) {
-  console.log(req.headers)
   if (req.path == '/') {
     next()
   } else {
@@ -108,7 +107,6 @@ router.patch('/:uid', function(req, res){
     if (u) {
       if (u._id == auth.user_id())
       {
-        console.log(Object.keys(req.body).length)
         if (!Object.keys(req.body).length) {
           res.send(400, {error: "empty request"})
         }

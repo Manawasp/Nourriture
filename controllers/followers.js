@@ -63,7 +63,7 @@ router.get('/:uid', function(req, res){
   User.findOne({'_id': req.params.uid}, '', function (err, user_cible) {
     if (user_cible) {
       followers_data = []
-      User.find({'_id': user_cible.followers}, '', function (err, users) {
+      User.find({'_id':  {$in: user_cible.followers}}, '', function (err, users) {
         if (users) {
           for (var i = 0; i < users.length; i++) {
             followers_data.push(users[i].information())
