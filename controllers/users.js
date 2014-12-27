@@ -18,8 +18,6 @@ router.use(function(req, res, next) {
   if (req.path == '/') {
     next()
   } else {
-    console.log(req.header('Auth-Token'))
-    console.log(req.header('Content-Type'))
     error = auth.verify(req.header('Auth-Token'))
     if (error != null) {
       res.type('application/json');
@@ -110,12 +108,21 @@ router.patch('/:uid', function(req, res){
     if (u) {
       if (u._id == auth.user_id())
       {
-        error = u.update_information(req.body)
-        if (error == null) {
-          uniqueness_email(u, res, valide_create)
+        console.log(Object.keys(req.body).length)
+        if (!Object.keys(req.body).length) {
+          res.send(400, {error: "empty request"})
         }
         else {
-          res.send(400, {error: error})
+          error = u.update_information(req.body)
+          if (error == null && req.body.email) {
+            uniqueness_email(u, res, valide_create)
+          }
+          else if (error == null){
+            valide_create(u, res)
+          }
+          else {
+            res.send(400, {error: error})
+          }
         }
       }
       else {
