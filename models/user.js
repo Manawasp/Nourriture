@@ -36,7 +36,7 @@ User.methods.create_by_email = function(params) {
   this.email      = params.email
   this.followers  = []
   this.followeds  = []
-  this.avatar     = ""
+  this.avatar     = "/images/avatar.jpg"
   this.password   = crypto.createHash('md5').update(params.password).digest("hex");
   this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
   this.access     = ['consumer']
@@ -56,9 +56,9 @@ User.methods.update_information = function(params) {
   if (error) {
     return error
   }
-  if (params.pseudo == "") {
+  // if (params.pseudo == "") {
     this.pseudo     = params.pseudo || this.pseudo
-  }
+  // }
   this.firstname  = params.firstname  || this.firstname
   this.lastname   = params.lastname   || this.lastname
   this.email      = params.email      || this.email
