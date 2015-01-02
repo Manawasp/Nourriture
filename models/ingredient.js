@@ -15,6 +15,7 @@ var Ingredient = new Schema({
     icon        : String,
     labels      : [String],
     blacklist   : [String],
+    color       : String,
     created_by  : String,
     created_at  : Date,
     updated_at  : Date
@@ -36,6 +37,7 @@ Ingredient.methods.create = function(params, user_id) {
     this.name       = params.name
     this.image      = []
     this.icon       = ""
+    this.color      = params.color || ""
     this.labels     = params.labels || []
     this.blacklist  = params.blacklist || []
     this.created_by = user_id
@@ -53,6 +55,7 @@ Ingredient.methods.update = function(params) {
     return error
   }
   else {
+    this.color      = params.color || ""
     this.name       = params.name || this.name
     this.labels     = params.labels || this.labels
     this.blacklist  = params.blacklist || this.blacklist
@@ -70,6 +73,7 @@ Ingredient.methods.information = function() {
           name:       this.name,
           image:      this.image,
           icon:       this.icon,
+          color:      this.color,
           labels:     this.labels,
           blacklist:  this.blacklist}
 }
