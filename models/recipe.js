@@ -9,20 +9,36 @@ var Media = new Schema({
     updated_at  : Date
 });
 
+var Duration = {
+  h   : Number,
+  m   : Number
+}
+
+var Part = {
+  title         : String,
+  Description   : String
+}
+
+var Mark_by = {
+  user: String,
+  value: Number 
+}
+
 var Recipe = new Schema({
     title       : String,
     description : String,
     ingredients : [String],
-    estimate    : Number,
-    video       : [Media],
+    people      : Number,
+    image       : String,
+    mark        : Number,
+    time_total  : [Number],
+    time_prep   : [Number],
+    steps       : [String],
     pictures    : [Media],
     comments    : [String],
     likes       : [String],
-    savours     : [String],
     labels      : [String],
     blacklist   : [String],
-    country     : String,
-    city        : String,
     created_by  : String,
     created_at  : Date,
     updated_at  : Date
@@ -36,7 +52,6 @@ Recipe.methods.create = function(params, user_id) {
   error = exist_title(params.title)                            ||
           validate_title(params.title)                         ||
           validate_array(params.ingredients,  "ingredients")  ||
-          validate_array(params.savours,      "savours")      ||
           validate_array(params.labels,       "labels")       ||
           validate_array(params.blacklist,    "blacklist");
   if (error) {
@@ -45,44 +60,116 @@ Recipe.methods.create = function(params, user_id) {
   else {
     this.title        = params.title
     this.description  = params.description || ""
+    this.image        = params.image || ""
     this.ingredients  = params.ingredients || []
-    this.estimate     = params.estimate || 0
-    this.video        = []
+    this.people       = params.people || 0
     this.pictures     = []
     this.likes        = []
     this.comments     = []
-    this.savours      = params.savours    || []
+    this.mark_list    = []
+    this.mark         = 0
+    this.steps        = params.steps      || []
     this.labels       = params.labels     || []
     this.blacklist    = params.blacklist  || []
-    this.country      = params.country    || ""
-    this.city         = params.city       || ""
     this.created_by   = user_id
     this.created_at   = new Date
     this.updated_at   = new Date
+
+    /* INIT OBJ TABLE */
+
+    this.parts      = {
+                        title         : "",
+                        description   : ""
+                      }
+    this.time_total = [0, 0]
+    this.time_prep  = [0, 0]
+
+    /* RECIPE PARTS (currently 1 limited) */
+    this.parts.title  = ""
+    this.parts.description = ""
+
+    if (params.parts) {
+      if (params.parts.title) {
+        this.parts.title = params.parts.title
+      }
+      if (params.parts.description) {
+        this.parts.description = params.parts.description
+      }
+    }
+
+    /* RECIPE DURATION : TOTAL */
+
+    if (params.time_total) {
+      if (params.time_total.m) {
+        this.time_total[1] = params.time_total.m
+      }
+      if (params.time_total.h) {
+        this.time_total[0]  = params.time_total.h
+      }
+    }
+
+    /* RECIPE DURATION : PREPARATION */
+
+    if (params.time_prep) {
+      if (params.time_prep.m) {
+        this.time_prep[1] = params.time_prep.m
+      }
+      if (params.time_prep.h) {
+        this.time_prep[0]  = params.time_prep.h
+      }
+    }
+    
     return null
   }
 }
 
 Recipe.methods.update = function(params) {
-  error = validate_title(params.title)                         ||
+  error = validate_title(params.title)                        ||
           validate_array(params.ingredients,  "ingredients")  ||
-          validate_array(params.savours,      "savours")      ||
           validate_array(params.labels,       "labels")       ||
+          validate_array(params.steps,        "steps")        ||
           validate_array(params.blacklist,    "blacklist");
   if (error) {
     return error
   }
   else {
+    this.image        = params.image        || this.image
     this.title        = params.title        || this.title
     this.description  = params.description  || this.description
     this.ingredients  = params.ingredients  || this.ingredients
-    this.estimate     = params.estimate     || this.estimate
-    this.savours      = params.savour       || this.savours
+    this.steps        = params.steps        || this.steps
+    this.people       = params.people       || this.people
     this.labels       = params.labels       || this.labels
     this.blacklist    = params.blacklist    || this.blacklist
-    this.country      = params.country      || this.country
-    this.city         = params.city         || this.city
     this.updated_at   = new Date
+    
+    if (params.time_prep) {
+      if (params.time_prep.m) {
+        this.time_prep[1] = params.time_prep.m
+      }
+      if (params.time_prep.h) {
+        this.time_prep[0]  = params.time_prep.h
+      }
+    }
+
+    if (params.time_total) {
+      if (params.time_total.m) {
+        this.time_total[1] = params.time_total.m
+      }
+      if (params.time_total.h) {
+        this.time_total[0]  = params.time_total.h
+      }
+    }
+
+    if (params.parts) {
+      if (params.parts.title) {
+        this.parts.title = params.parts.title
+      }
+      if (params.parts.description) {
+        this.parts.description = params.parts.description
+      }
+    }
+   
     return null
   }
 }
@@ -135,16 +222,20 @@ Recipe.methods.unlike = function(user_id) {
 
 Recipe.methods.information = function() {
   return {id:           this._id,
+          image:        this.image,
           title:        this.title,
           description:  this.description,
-          estimate:     this.estimate,
-          savours:      this.savours,
+          ingredients_length:  this.ingredients.length,
           labels:       this.labels,
           blacklist:    this.blacklist,
-          country:      this.country,
-          city:         this.city,
+          mark:         this.mark,
           likes:        this.likes.length,
-          comments:     this.comments.length,
+          comments_length:     this.comments.length,
+          people:       this.people,
+          steps:        this.steps,
+          parts:        this.parts,
+          time_total:   {h: this.time_total[0], m: this.time_total[1]},
+          time_prep:    {h: this.time_prep[0], m: this.time_prep[1]},
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }

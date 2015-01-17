@@ -23,7 +23,7 @@ router.use(function(req, res, next) {
 var multipartMiddleware = multipart({uploadDir: __dirname +'/../public/pictures' });
 
 router.post('/', multipartMiddleware, function(req, res) {
-  url_img = req.files.file.path.split('/home/manawasp/node/Nourriture')[1]
+  url_img = req.files.file.path.split('/home/manawasp/node/Nourriture/public/pictures')[1]
   res.send(200, {'url': url_img})
 })
 

@@ -36,7 +36,7 @@ Ingredient.methods.create = function(params, user_id) {
   else {
     this.name       = params.name
     this.image      = []
-    this.icon       = ""
+    this.icon       = params.icon || ""
     this.color      = params.color || ""
     this.labels     = params.labels || []
     this.blacklist  = params.blacklist || []
@@ -59,6 +59,7 @@ Ingredient.methods.update = function(params) {
     this.name       = params.name || this.name
     this.labels     = params.labels || this.labels
     this.blacklist  = params.blacklist || this.blacklist
+    this.icon       = params.icon || this.icon
     this.updated_at = new Date
     return null
   }
