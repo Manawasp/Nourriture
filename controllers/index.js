@@ -13,5 +13,6 @@ router.use('/comments/recipes',	require('./recipes_comments'));
 router.use('/like/recipes',   	require('./recipes_like'));
 router.use('/like/moments',    	require('./moments_like'));
 router.use('/pictures/',   		require('./pictures'));
+router.use('/homepage/',   		require('./comrecipe'));
 
 module.exports = router
