@@ -187,7 +187,7 @@ var show_recipe = function(recipe, res) {
     if (user) {
       data_user = user.information()
     }
-    Ingredient.find({'_id': recipe.ingredients}, '', function(err, ingredients) {
+    Ingredient.find({'_id': {$in: recipe.ingredients}}, '', function(err, ingredients) {
       data_ingredient = []
       if (ingredients) {
         for (var i = 0; i < ingredients.length; i++) {
