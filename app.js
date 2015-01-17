@@ -15,7 +15,7 @@ var express     = require('express')
   , db          = require('./db')
   , bodyParser  = require('body-parser')
   , cors        = require('cors')
-
+  , path 		= require('path');
 
 /**
  * global var
@@ -30,12 +30,14 @@ var app         = express()
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors())
+console.log(path.join(__dirname, 'public'))
+app.use("/pictures", express.static(path.join(__dirname, 'public/pictures')));
+app.use(cors());
 
 /**
  * Initialization
  */
-app.get('')
+
 app.use(require('./controllers'));
 
 /**
