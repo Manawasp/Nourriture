@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var random = require('mongoose-random');
 
 var Media = new Schema({
     url         : String,
@@ -34,6 +35,7 @@ var Recipe = new Schema({
     time_total  : [Number],
     time_prep   : [Number],
     steps       : [String],
+    parts       : [String],
     pictures    : [Media],
     comments    : [String],
     likes       : [String],
@@ -43,6 +45,7 @@ var Recipe = new Schema({
     created_at  : Date,
     updated_at  : Date
 });
+
 
 /**
  * Public Method
@@ -77,23 +80,18 @@ Recipe.methods.create = function(params, user_id) {
 
     /* INIT OBJ TABLE */
 
-    this.parts      = {
-                        title         : "",
-                        description   : ""
-                      }
+    this.parts      = ["", ""]
     this.time_total = [0, 0]
     this.time_prep  = [0, 0]
 
     /* RECIPE PARTS (currently 1 limited) */
-    this.parts.title  = ""
-    this.parts.description = ""
 
     if (params.parts) {
       if (params.parts.title) {
-        this.parts.title = params.parts.title
+        this.parts[0] = params.parts.title
       }
       if (params.parts.description) {
-        this.parts.description = params.parts.description
+        this.parts[1] = params.parts.description
       }
     }
 
@@ -163,10 +161,10 @@ Recipe.methods.update = function(params) {
 
     if (params.parts) {
       if (params.parts.title) {
-        this.parts.title = params.parts.title
+        this.parts[0] = params.parts.title
       }
       if (params.parts.description) {
-        this.parts.description = params.parts.description
+        this.parts[1] = params.parts.description
       }
     }
    
@@ -228,19 +226,21 @@ Recipe.methods.information = function() {
           ingredients_length:  this.ingredients.length,
           labels:       this.labels,
           blacklist:    this.blacklist,
-          mark:         this.mark,
+          mark:         3.6,
           likes:        this.likes.length,
           comments_length:     this.comments.length,
           people:       this.people,
           steps:        this.steps,
-          parts:        this.parts,
+          parts:        [{title: this.parts[0], description: this.parts[1]}],
           time_total:   {h: this.time_total[0], m: this.time_total[1]},
           time_prep:    {h: this.time_prep[0], m: this.time_prep[1]},
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }
 
-mongoose.model('Recipe', Recipe);
+Recipe.plugin(random, { path: 'r' });
+
+var r = mongoose.model('Recipe', Recipe);
 
 /**
  * Private Method

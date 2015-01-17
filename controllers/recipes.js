@@ -35,7 +35,7 @@ router.post('/search', function(req, res){
   res.type('application/json');
   res.type('application/json')
   params = req.body
-  if (typeof params.title == 'string') {
+  if (params.title) {
     var re = new RegExp(params.title, 'i');
     query = Recipe.find({'title': re})
   } else {
@@ -44,7 +44,7 @@ router.post('/search', function(req, res){
   offset = 0
   limit = 11
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
-  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 21) {limit = params.limit}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
   if (params.blacklist && Array.isArray(params.blacklist)) {
     query.where('blacklist').nin(params.blacklist);
   }

@@ -17,6 +17,7 @@
     "superagent": "*",
     "expect.js": "*",
     "cors": "*",
-    "connect-multiparty": "*"
+    "connect-multiparty": "*",
+    "mongoose-random": "*"
   }
 }
