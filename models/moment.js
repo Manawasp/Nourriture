@@ -111,6 +111,7 @@ Moment.methods.information = function() {
           description:  this.description,
           likes:        this.likes.length,
           comments:     this.comments.length,
+          recipe:       this.recipe,
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }

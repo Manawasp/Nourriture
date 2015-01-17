@@ -8,6 +8,7 @@ var express     = require('express')
   , mongoose    = require('mongoose')
   , User        = mongoose.model('User')
   , Moment      = mongoose.model('Moment')
+  , Recipe      = mongoose.model('Recipe')
   , Ingredient  = mongoose.model('Ingredient')
   , Comment     = mongoose.model('Comment')
   , auth        = require('./services/authentification');
@@ -45,17 +46,44 @@ router.post('/search', function(req, res){
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 10) {limit = params.limit}
   query.skip(offset).limit(limit)
-  query.exec(function (err, moments) {
-    data_moment = []
+  query.sort({created_at: 'desc'}).exec(function (err, moments) {
+    var data_moment = []
+    data_recipes = []
     if (err) {
       res.send(500, {error: "moment: f(router.post'/search')"})
     }
     else if (moments) {
       for (var i = 0; i < moments.length; i++) {
         data_moment.push(moments[i].information())
+        if (moments[i].recipe) {
+          try {
+            console.log(mongoose.Types.ObjectId(moments[i].recipe))
+            data_recipes.push(moments[i].recipe)
+          }
+          catch(err) {
+          }
+        }
       }
     }
-    res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+    if (data_recipes.length == 0) {
+      res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+    }
+    else {
+      Recipe.find({'_id': {$in: data_recipes}}, '', function(err, recipes) {
+        if (err) {
+          console.log(err)
+        }
+        else {
+          for (var i = 0; i < recipes.length; i++) {
+            for (var n = 0; n < data_moment.length; n++) {
+              if (data_moment[n].recipe == recipes[i].id){
+                data_moment[n].recipe = recipes[i].information()}
+            }
+          }
+        }
+        res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+      });
+    }
   });
 })
 
