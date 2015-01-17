@@ -16,6 +16,7 @@
     "mocha": "*",
     "superagent": "*",
     "expect.js": "*",
-    "cors": "*"
+    "cors": "*",
+    "connect-multiparty": "*"
   }
 }
