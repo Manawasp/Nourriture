@@ -394,8 +394,8 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.lastname).exist;
-        expect(res.body.lastname).to.equal("SirClovis")
+        expect(res.body.user.lastname).exist;
+        expect(res.body.user.lastname).to.equal("SirClovis")
         done()
       });
     });
