@@ -534,6 +534,7 @@ describe('User Controller', function(){
         expect(res.status).to.equal(200);
         users[0].id     = res.body.user.id;
         users[0].token  = res.body.token;
+        console.log(res.body)
         done()
       });
     });
