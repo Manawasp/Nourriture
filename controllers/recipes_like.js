@@ -15,14 +15,8 @@ var express   = require('express')
  */
 
 router.use(function(req, res, next) {
-  error = auth.verify(req.header('Auth-Token'))
-  if (error != null) {
-    res.type('application/json');
-    res.send(error.code, error.json_value);
-  }
-  else {
-    next()
-  }
+  res.type('application/json');
+  auth.verify(req.header('Auth-Token'), res, next)
 })
 
 /**

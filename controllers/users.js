@@ -22,15 +22,6 @@ router.use(function(req, res, next) {
   } else {
     res.type('application/json');
     auth.verify(req.header('Auth-Token'), res, next)
-    // , function() {
-    //   if () != null) {
-    //     res.send(error.code, error.json_value);
-    //   }
-    //   else {
-    //     console.log("user: no error" + req.method)
-    //     next()
-    //   }
-    // });
   }
 });
 
