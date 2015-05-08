@@ -164,7 +164,7 @@ router.post('/:uid/pictures', function(req, res) {
     if (u) {
       if (u._id == auth.user_id())
       {
-        if (req.body.extend == "jpg" || req.body.extend == "png"){
+        if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined){
           fs.writeFile(__dirname + '/../public/pictures/avatars/' + u._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {console.log("Picture err : " + err)});
           u.avatar = "http://localhost:8080/pictures/avatars/" + u._id + "." +  req.body.extend
           valide_create(u, req, res)
