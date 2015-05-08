@@ -7,7 +7,10 @@ var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
+  , redis     = require("redis")
+  , redisClient = redis.createClient()
   , auth      = require('./services/authentification');
+  redisClient.setMaxListeners(0);
 
 /**
  * Router middleware
@@ -17,14 +20,17 @@ router.use(function(req, res, next) {
   if (req.path == '/') {
     next()
   } else {
-    error = auth.verify(req.header('Auth-Token'))
-    if (error != null) {
-      res.type('application/json');
-      res.send(error.code, error.json_value);
-    }
-    else {
-      next()
-    }
+    res.type('application/json');
+    auth.verify(req.header('Auth-Token'), res, next)
+    // , function() {
+    //   if () != null) {
+    //     res.send(error.code, error.json_value);
+    //   }
+    //   else {
+    //     console.log("user: no error" + req.method)
+    //     next()
+    //   }
+    // });
   }
 });
 
@@ -72,7 +78,7 @@ router.post('/', function(req, res){
     res.send(400, {error: error});
   }
   else {
-    uniqueness_email(user, res, valide_create)
+    uniqueness_email(user, req, res, valide_create)
   }
 })
 
@@ -113,10 +119,10 @@ router.patch('/:uid', function(req, res){
         else {
           error = u.update_information(req.body)
           if (error == null && req.body.email) {
-            uniqueness_email(u, res, valide_create)
+            uniqueness_email(u, req, res, valide_create)
           }
           else if (error == null){
-            valide_create(u, res)
+            valide_create(u, req, res)
           }
           else {
             res.send(400, {error: error})
@@ -165,18 +171,22 @@ module.exports = router
  * Private method
  */
 
-var uniqueness_email = function(user, res, callback) {
+var uniqueness_email = function(user, req, res, callback) {
   User.findOne({'email': user.email}, '', function (err, user_data) {
     if (user_data) {
       res.send(400, {error: "this email is already taken"})
     }
     else {
-      callback(user, res)
+      callback(user, req, res)
     }
   });
 }
 
-var valide_create = function(user, res) {
+var valide_create = function(user, req, res) {
   user.save()
+  if (req.method == "POST") {
+    redisClient.rpush(["user:" + user._id + ":token", user.salt], redis.print);
+    redisClient.quit();
+  }
   res.send(200, {token: user.auth_token(), user: user.personal_information()})
 }

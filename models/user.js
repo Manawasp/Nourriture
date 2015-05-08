@@ -48,6 +48,9 @@ User.methods.create_by_email = function(params) {
   return null
 }
 
+User.methods.new_salt = function() {
+  this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
+}
 
 User.methods.update_information = function(params) {
   error = validate_pseudo(params.pseudo)  ||

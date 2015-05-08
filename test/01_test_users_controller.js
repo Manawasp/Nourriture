@@ -1,7 +1,11 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('User Controller', function(){
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
+
   describe('CREATE User', function(){
    it ('400: pseudo - empty', function(done){
      request
@@ -159,6 +163,8 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
+        users[0].id     = res.body.user.id;
+        users[0].token  = res.body.token;
         done()
      });
     });
@@ -172,6 +178,8 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
+        users[1].id     = res.body.user.id;
+        users[1].token  = res.body.token;
         done()
      });
     });
@@ -185,6 +193,8 @@ describe('User Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
+        users[2].id     = res.body.user.id;
+        users[2].token  = res.body.token;
         done()
      });
     });
@@ -205,52 +215,11 @@ describe('User Controller', function(){
   });
 
   describe('RETRIEVE User', function(){
-    var user1_token = "";
-    var user1_id = undefined;
-    var user2_token = "";
-    var user2_id = undefined;
-
-    before(function(done){
-     request
-      .post('localhost:8080/sessions')
-      .send('{"email": "manawasp@gmail.com", "password": "Manawasp59"}')
-      .set('Content-Type', 'application/json')
-      .end(function(res)
-      {
-        expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        expect(res.body.token).to.exist;
-        expect(res.body.user).to.exist;
-        expect(res.body.user.id).to.exist;
-        user1_id = res.body.user.id;
-        user1_token = res.body.token
-        // expect(res.status).to.equal(400);
-        // expect(res.body).to.contain('world');
-       request
-        .post('localhost:8080/sessions')
-        .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
-        .set('Content-Type', 'application/json')
-        .end(function(res)
-        {
-          expect(res).to.exist;
-          expect(res.status).to.equal(200);
-          expect(res.body.token).to.exist;
-          expect(res.body.user).to.exist;
-          expect(res.body.user.id).to.exist;
-          user2_id = res.body.user.id;
-          user2_token = res.body.token
-          // expect(res.status).to.equal(400);
-          // expect(res.body).to.contain('world');
-          done()
-        });
-      });
-    })
-
     it ("200: my private information", function(done){
      request
-      .get('localhost:8080/users/'+ user1_id)
+      .get('localhost:8080/users/'+ users[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -262,9 +231,9 @@ describe('User Controller', function(){
 
     it ("200: no access to other private user informations'", function(done){
      request
-      .get('localhost:8080/users/'+ user1_id)
+      .get('localhost:8080/users/'+ users[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -278,7 +247,7 @@ describe('User Controller', function(){
      request
       .get('localhost:8080/users/okfepkfepokfeopk')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -302,44 +271,7 @@ describe('User Controller', function(){
     });
   });
 
-    describe('UPDATE User', function(){
-    var user1_token = "";
-    var user1_id = undefined;
-    var user2_token = "";
-    var user2_id = undefined;
-
-    before(function(done){
-     request
-      .post('localhost:8080/sessions')
-      .send('{"email": "manawasp@gmail.com", "password": "Manawasp59"}')
-      .set('Content-Type', 'application/json')
-      .end(function(res)
-      {
-        expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        expect(res.body.token).to.exist;
-        expect(res.body.user).to.exist;
-        expect(res.body.user.id).to.exist;
-        user1_id = res.body.user.id;
-        user1_token = res.body.token
-        request
-          .post('localhost:8080/sessions')
-          .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
-          .set('Content-Type', 'application/json')
-          .end(function(res)
-        {
-          expect(res).to.exist;
-          expect(res.status).to.equal(200);
-          expect(res.body.token).to.exist;
-          expect(res.body.user).to.exist;
-          expect(res.body.user.id).to.exist;
-          user2_id = res.body.user.id;
-          user2_token = res.body.token
-          done()
-        });
-      });
-    })
-  
+  describe('UPDATE User', function(){
     it ("401: unhautorized if not connected", function(done){
      request
       .patch('localhost:8080/users/okfepkfepokfeopk')
@@ -359,7 +291,7 @@ describe('User Controller', function(){
       .patch('localhost:8080/users/okfepkfepokfeopk')
       .set('Content-Type', 'application/json')
       .send('{}')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -371,10 +303,10 @@ describe('User Controller', function(){
 
     it ("403: can't update an other user profile", function(done){
      request
-      .patch('localhost:8080/users/' + user2_id)
+      .patch('localhost:8080/users/' + users[1].id)
       .set('Content-Type', 'application/json')
       .send('{}')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -386,10 +318,10 @@ describe('User Controller', function(){
 
     it ("200: update user information", function(done){
      request
-      .patch('localhost:8080/users/' + user1_id)
+      .patch('localhost:8080/users/' + users[0].id)
       .set('Content-Type', 'application/json')
       .send('{"lastname": "SirClovis"}')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -401,45 +333,7 @@ describe('User Controller', function(){
     });
   });
 
-
   describe('DELETE User', function(){
-    var user1_token = "";
-    var user1_id = undefined;
-    var user2_token = "";
-    var user2_id = undefined;
-
-    before(function(done){
-     request
-      .post('localhost:8080/sessions')
-      .send('{"email": "manawasp@gmail.com", "password": "Manawasp59"}')
-      .set('Content-Type', 'application/json')
-      .end(function(res)
-      {
-        expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        expect(res.body.token).to.exist;
-        expect(res.body.user).to.exist;
-        expect(res.body.user.id).to.exist;
-        user1_id = res.body.user.id;
-        user1_token = res.body.token
-        request
-          .post('localhost:8080/sessions')
-          .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
-          .set('Content-Type', 'application/json')
-          .end(function(res)
-        {
-          expect(res).to.exist;
-          expect(res.status).to.equal(200);
-          expect(res.body.token).to.exist;
-          expect(res.body.user).to.exist;
-          expect(res.body.user.id).to.exist;
-          user2_id = res.body.user.id;
-          user2_token = res.body.token
-          done()
-        });
-      });
-    })
-
    it ("401: unhautorized if not connected", function(done){
      request
       .del('localhost:8080/users/okfepkfepokfeopk')
@@ -459,7 +353,7 @@ describe('User Controller', function(){
       .del('localhost:8080/users/okfepkfepokfeopk')
       .set('Content-Type', 'application/json')
       .send('{}')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -471,10 +365,10 @@ describe('User Controller', function(){
 
     it ("403: can't update an other user profile", function(done){
      request
-      .del('localhost:8080/users/' + user2_id)
+      .del('localhost:8080/users/' + users[1].id)
       .set('Content-Type', 'application/json')
       .send('{}')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -486,10 +380,10 @@ describe('User Controller', function(){
 
     it ("202: Delete user information", function(done){
      request
-      .del('localhost:8080/users/' + user1_id)
+      .del('localhost:8080/users/' + users[0].id)
       .set('Content-Type', 'application/json')
-      .send('{"lastname": "SirClovis"}')
-      .set('Auth-Token', user1_token)
+      .send('{}')
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -502,26 +396,6 @@ describe('User Controller', function(){
   });
 
   describe('SEARCH User', function(){
-    var user1_token = "";
-    var user1_id = undefined;
-
-    before(function(done){
-      request
-        .post('localhost:8080/sessions')
-        .send('{"email": "manawasp@gmail.com", "password": "Manawasp59"}')
-        .set('Content-Type', 'application/json')
-        .end(function(res)
-      {
-        expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        expect(res.body.token).to.exist;
-        expect(res.body.user).to.exist;
-        expect(res.body.user.id).to.exist;
-        user1_id = res.body.user.id;
-        user1_token = res.body.token
-       done()
-      });
-    })
 
     it ("401: unhautorized if not connected", function(done){
      request
@@ -541,7 +415,7 @@ describe('User Controller', function(){
      request
       .post('localhost:8080/users/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -562,7 +436,7 @@ describe('User Controller', function(){
      request
       .post('localhost:8080/users/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"pseudo":"manawasp2"}')
       .end(function(res)
       {
@@ -583,7 +457,7 @@ describe('User Controller', function(){
      request
       .post('localhost:8080/users/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"pseudo":"manawasp2","offset":10,"limit":2}')
       .end(function(res)
       {
@@ -600,4 +474,67 @@ describe('User Controller', function(){
       });
     });
   });
+
+  describe('DELETE Session', function(){
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .del('localhost:8080/sessions')
+      .set('Content-Type', 'application/json')
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("you need to be connected");
+        done()
+      });
+    });
+
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .del('localhost:8080/sessions')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[0].token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.success).to.equal("session deleted");
+        done()
+      });
+    });
+
+    it ("200: Can't update information because token invalid", function(done){
+     request
+      .patch('localhost:8080/users/' + users[0].id)
+      .set('Content-Type', 'application/json')
+      .send('{"lastname": "clovis"}')
+      .set('Auth-Token', users[0].token)
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("token too old");
+        done()
+      });
+    });
+
+  });
+
+  describe('CREATE Session', function(){
+    it ("200: create superadmin to test", function(done){
+      request
+      .post('localhost:8080/sessions')
+      .send('{"pseudo": "superadmin", "email": "superadmin@gmail.com", "password": "Superadmin59"}')
+      .set('Content-Type', 'application/json')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        done()
+      });
+    });
+  });
+
 });
