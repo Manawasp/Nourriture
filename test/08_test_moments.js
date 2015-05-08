@@ -1,11 +1,10 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('Moment Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
   var ingredient1_id = "";
   var ingredient2_id = "";
   var moment_id = "";
@@ -22,8 +21,8 @@ describe('Moment Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "superadmin@gmail.com", "password": "Superadmin59"}')
@@ -35,12 +34,12 @@ describe('Moment Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         request
           .post('localhost:8080/ingredients/search')
           .set('Content-Type', 'application/json')
-          .set('Auth-Token', user1_token)
+          .set('Auth-Token', users[0].token)
           .send('{}')
           .end(function(res)
         {
@@ -76,7 +75,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -91,7 +90,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"description":"a"}')
       .end(function(res)
       {
@@ -107,7 +106,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"description":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"]}')
       .end(function(res)
       {
@@ -140,7 +139,7 @@ describe('Moment Controller', function(){
      request
       .get('localhost:8080/moments/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -155,7 +154,7 @@ describe('Moment Controller', function(){
      request
       .get('localhost:8080/moments/' + moment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -187,7 +186,7 @@ describe('Moment Controller', function(){
      request
       .patch('localhost:8080/moments/' + moment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -202,7 +201,7 @@ describe('Moment Controller', function(){
      request
       .patch('localhost:8080/moments/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -217,7 +216,7 @@ describe('Moment Controller', function(){
      request
       .patch('localhost:8080/moments/' + moment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"description": "Super pork and sugar"}')
       .end(function(res)
       {
@@ -248,7 +247,7 @@ describe('Moment Controller', function(){
      request
       .del('localhost:8080/moments/' + moment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -263,7 +262,7 @@ describe('Moment Controller', function(){
      request
       .del('localhost:8080/moments/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -278,7 +277,7 @@ describe('Moment Controller', function(){
      request
       .del('localhost:8080/moments/' + moment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -296,7 +295,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"description":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"]}')
       .end(function(res)
       {
@@ -325,7 +324,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -346,8 +345,8 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
-      .send('{"user_id":"'+user2_id+'"}')
+      .set('Auth-Token', users[0].token)
+      .send('{"user_id":"'+users[1].id+'"}')
       .end(function(res)
       {
         expect(res.status).to.equal(200);
@@ -367,8 +366,8 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
-      .send('{"user_id":"'+user1_id+'"}')
+      .set('Auth-Token', users[1].token)
+      .send('{"user_id":"'+users[0].id+'"}')
       .end(function(res)
       {
         expect(res.status).to.equal(200);
@@ -388,7 +387,7 @@ describe('Moment Controller', function(){
      request
       .post('localhost:8080/moments/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"offset":1}')
       .end(function(res)
       {

@@ -1,11 +1,10 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('RecipesComments Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
   var recipe_id = "";
   var comment_id = "";
 
@@ -21,8 +20,8 @@ describe('RecipesComments Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "superadmin@gmail.com", "password": "Superadmin59"}')
@@ -34,12 +33,12 @@ describe('RecipesComments Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         request
           .post('localhost:8080/recipes/search')
           .set('Content-Type', 'application/json')
-          .set('Auth-Token', user1_token)
+          .set('Auth-Token', users[0].token)
           .send('{"labels": ["grandchallenge"]}')
           .end(function(res)
         {
@@ -78,7 +77,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -93,7 +92,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"comment": "21"}')
       .end(function(res)
       {
@@ -108,7 +107,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"comment": "Hello"}')
       .end(function(res)
       {
@@ -143,7 +142,7 @@ describe('RecipesComments Controller', function(){
      request
       .get('localhost:8080/comments/recipes/' + recipe_id + '/wijowidj')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -158,7 +157,7 @@ describe('RecipesComments Controller', function(){
      request
       .get('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"comment": "super plus long"}')
       .end(function(res)
       {
@@ -190,7 +189,7 @@ describe('RecipesComments Controller', function(){
      request
       .patch('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -205,7 +204,7 @@ describe('RecipesComments Controller', function(){
      request
       .patch('localhost:8080/comments/recipes/' + recipe_id + '/wijowidj')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -220,7 +219,7 @@ describe('RecipesComments Controller', function(){
      request
       .patch('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"comment": "super plus long"}')
       .end(function(res)
       {
@@ -253,7 +252,7 @@ describe('RecipesComments Controller', function(){
      request
       .del('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -268,7 +267,7 @@ describe('RecipesComments Controller', function(){
      request
       .del('localhost:8080/comments/recipes/' + recipe_id + '/wijowidj')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -283,7 +282,7 @@ describe('RecipesComments Controller', function(){
      request
       .del('localhost:8080/comments/recipes/' + recipe_id + '/' + comment_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -302,7 +301,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"comment": "Hello"}')
       .end(function(res)
       {
@@ -333,7 +332,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/okdwopkwpdok/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -354,7 +353,7 @@ describe('RecipesComments Controller', function(){
      request
       .post('localhost:8080/comments/recipes/' + recipe_id + '/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {

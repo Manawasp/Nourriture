@@ -1,11 +1,10 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('Recipes Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
   var ingredient1_id = "";
   var ingredient2_id = "";
   var recipe_id = "";
@@ -22,8 +21,8 @@ describe('Recipes Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "superadmin@gmail.com", "password": "Superadmin59"}')
@@ -35,12 +34,12 @@ describe('Recipes Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         request
           .post('localhost:8080/ingredients/search')
           .set('Content-Type', 'application/json')
-          .set('Auth-Token', user1_token)
+          .set('Auth-Token', users[0].token)
           .send('{}')
           .end(function(res)
         {
@@ -76,7 +75,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -91,7 +90,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -106,7 +105,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"title":"a"}')
       .end(function(res)
       {
@@ -122,7 +121,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"title":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"], "savours": ["sugar"], "labels": ["grandchallenge"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
       .end(function(res)
       {
@@ -155,7 +154,7 @@ describe('Recipes Controller', function(){
      request
       .get('localhost:8080/recipes/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -170,7 +169,7 @@ describe('Recipes Controller', function(){
      request
       .get('localhost:8080/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -202,7 +201,7 @@ describe('Recipes Controller', function(){
      request
       .patch('localhost:8080/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -217,7 +216,7 @@ describe('Recipes Controller', function(){
      request
       .patch('localhost:8080/recipes/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -232,7 +231,7 @@ describe('Recipes Controller', function(){
      request
       .patch('localhost:8080/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"title": "Super pork and sugar"}')
       .end(function(res)
       {
@@ -263,7 +262,7 @@ describe('Recipes Controller', function(){
      request
       .del('localhost:8080/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -278,7 +277,7 @@ describe('Recipes Controller', function(){
      request
       .del('localhost:8080/recipes/dedplepf')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -293,7 +292,7 @@ describe('Recipes Controller', function(){
      request
       .del('localhost:8080/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"title": "Super pork and sugar"}')
       .end(function(res)
       {
@@ -311,7 +310,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"title":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"], "savours": ["sugar"], "labels": ["grandchallenge"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
       .end(function(res)
       {
@@ -340,7 +339,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -361,7 +360,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"title":"ug"}')
       .end(function(res)
       {
@@ -382,7 +381,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"offset":1}')
       .end(function(res)
       {
@@ -402,7 +401,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"savours":["sugar"]}')
       .end(function(res)
       {
@@ -423,7 +422,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"blacklist":["musulman"]}')
       .end(function(res)
       {
@@ -443,7 +442,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"ingredients": ["'+ingredient1_id+'"]}')
       .end(function(res)
       {
@@ -463,7 +462,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"country": "france"}')
       .end(function(res)
       {
@@ -484,7 +483,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"labels": ["grandchallenge"]}')
       .end(function(res)
       {

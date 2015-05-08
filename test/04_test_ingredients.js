@@ -1,11 +1,10 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('Ingredients Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
   var ingredient1_id = "";
   var ingredient2_id = "";
 
@@ -21,8 +20,8 @@ describe('Ingredients Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "superadmin@gmail.com", "password": "Superadmin59"}')
@@ -34,8 +33,8 @@ describe('Ingredients Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         done()
       });
     });
@@ -61,7 +60,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -76,7 +75,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -91,7 +90,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"a"}')
       .end(function(res)
       {
@@ -106,7 +105,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"chocolat"}')
       .end(function(res)
       {
@@ -122,7 +121,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"sugar"}')
       .end(function(res)
       {
@@ -137,7 +136,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"pork", "blacklist": ["musulman"]}')
       .end(function(res)
       {
@@ -154,7 +153,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"pork", "blacklist": ["musulman"]}')
       .end(function(res)
       {
@@ -186,7 +185,7 @@ describe('Ingredients Controller', function(){
      request
       .patch('localhost:8080/ingredients/' + ingredient1_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -201,7 +200,7 @@ describe('Ingredients Controller', function(){
      request
       .patch('localhost:8080/ingredients/diowjoidw')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -216,7 +215,7 @@ describe('Ingredients Controller', function(){
      request
       .patch('localhost:8080/ingredients/' + ingredient1_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name": "choco"}')
       .end(function(res)
       {
@@ -248,7 +247,7 @@ describe('Ingredients Controller', function(){
      request
       .get('localhost:8080/ingredients/fokjwpo')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -263,7 +262,7 @@ describe('Ingredients Controller', function(){
      request
       .get('localhost:8080/ingredients/' + ingredient1_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -296,7 +295,7 @@ describe('Ingredients Controller', function(){
      request
       .del('localhost:8080/ingredients/' + ingredient1_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -311,7 +310,7 @@ describe('Ingredients Controller', function(){
      request
       .del('localhost:8080/ingredients/fokjwpo')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -326,7 +325,7 @@ describe('Ingredients Controller', function(){
      request
       .del('localhost:8080/ingredients/' + ingredient1_id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -358,7 +357,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -379,7 +378,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"name":"ug"}')
       .end(function(res)
       {
@@ -400,7 +399,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"offset":1}')
       .end(function(res)
       {
@@ -420,7 +419,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"limit":1}')
       .end(function(res)
       {
@@ -441,7 +440,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"blacklist":["musulman"]}')
       .end(function(res)
       {

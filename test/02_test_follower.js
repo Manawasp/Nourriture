@@ -1,11 +1,10 @@
 var request = require('superagent'),
   expect = require('expect.js');
-  
+
 describe('Follower Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
 
   before(function(done){
    request
@@ -19,8 +18,8 @@ describe('Follower Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "manawasp2@gmail.com", "password": "Manawasp59"}')
@@ -32,8 +31,8 @@ describe('Follower Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         done()
       });
     });
@@ -60,9 +59,10 @@ describe('Follower Controller', function(){
       .post('localhost:8080/followers/')
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
+        console.log(res.body)
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal('bad request');
@@ -75,7 +75,7 @@ describe('Follower Controller', function(){
       .post('localhost:8080/followers/')
       .send('{"user_id": "dokwpdokwokw"}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -88,9 +88,9 @@ describe('Follower Controller', function(){
     it ("200: build follow relation", function(done){
      request
       .post('localhost:8080/followers/')
-      .send('{"user_id": "' + user2_id + '"}')
+      .send('{"user_id": "' + users[1].id + '"}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -102,9 +102,9 @@ describe('Follower Controller', function(){
     it ("400: relation already exist", function(done){
      request
       .post('localhost:8080/followers/')
-      .send('{"user_id": "' + user2_id + '"}')
+      .send('{"user_id": "' + users[1].id + '"}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -119,9 +119,9 @@ describe('Follower Controller', function(){
     // it ("400: you can't follow yourself", function(done){
     //  request
     //   .post('localhost:8080/followers/')
-    //   .send('{"user_id": "' + user1_id + '"}')
+    //   .send('{"user_id": "' + users[0].id + '"}')
     //   .set('Content-Type', 'application/json')
-    //   .set('Auth-Token', user1_token)
+    //   .set('Auth-Token', users[0].token)
     //   .end(function(res)
     //   {
     //     console.log(res.body)
@@ -154,7 +154,7 @@ describe('Follower Controller', function(){
       .get('localhost:8080/followers/ojwdoiwj')
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -167,10 +167,10 @@ describe('Follower Controller', function(){
 
     it ("200: retrieve followers data", function(done){
      request
-      .get('localhost:8080/followers/' + user1_id)
+      .get('localhost:8080/followers/' + users[0].id)
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -203,7 +203,7 @@ describe('Follower Controller', function(){
       .del('localhost:8080/followers/ojwdoiwj')
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -216,10 +216,10 @@ describe('Follower Controller', function(){
 
     it ("200: user is removed", function(done){
      request
-      .del('localhost:8080/followers/'+ user2_id)
+      .del('localhost:8080/followers/'+ users[1].id)
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
@@ -232,10 +232,10 @@ describe('Follower Controller', function(){
 
     it ("400: your not followed by him", function(done){
      request
-      .del('localhost:8080/followers/'+ user2_id)
+      .del('localhost:8080/followers/'+ users[1].id)
       .send('{}')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .end(function(res)
       {
         expect(res).to.exist;
