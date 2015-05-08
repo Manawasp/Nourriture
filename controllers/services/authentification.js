@@ -1,6 +1,6 @@
 var jwt       = require('jsonwebtoken')
-  , redis     = require("redis")
-  , redisClient = redis.createClient()
+  , Redis     = require("ioredis")
+  , redisClient = new Redis()
   , secret    = 'eyJmaXJzdG5hbWUiOiJDbG92aXMiLCJsYXN0bmF'
   , user_id   = null
   , user_hash = null

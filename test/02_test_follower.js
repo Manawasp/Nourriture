@@ -62,7 +62,6 @@ describe('Follower Controller', function(){
       .set('Auth-Token', users[0].token)
       .end(function(res)
       {
-        console.log(res.body)
         expect(res).to.exist;
         expect(res.status).to.equal(400);
         expect(res.body.error).to.equal('bad request');

@@ -7,8 +7,8 @@ var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
-  , redis     = require("redis")
-  , redisClient = redis.createClient()
+  , Redis     = require("ioredis")
+  , redisClient = new Redis()
   , auth      = require('./services/authentification');
   redisClient.setMaxListeners(0);
 
@@ -176,8 +176,10 @@ var uniqueness_email = function(user, req, res, callback) {
 var valide_create = function(user, req, res) {
   user.save()
   if (req.method == "POST") {
-    redisClient.rpush(["user:" + user._id + ":token", user.salt], redis.print);
-    redisClient.quit();
+    user.new_salt();
+    redisClient.lpush(["user:" + user._id + ":token", user.salt], function(err, result){
+      // redisClient.quit();
+    });
   }
   res.send(200, {token: user.auth_token(), user: user.personal_information()})
 }

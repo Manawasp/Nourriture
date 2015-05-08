@@ -526,15 +526,33 @@ describe('User Controller', function(){
     it ("200: create superadmin to test", function(done){
       request
       .post('localhost:8080/sessions')
-      .send('{"pseudo": "superadmin", "email": "superadmin@gmail.com", "password": "Superadmin59"}')
+      .send('{"pseudo": "manawasp", "email": "manawasp@gmail.com", "password": "Manawasp59"}')
       .set('Content-Type', 'application/json')
       .end(function(res)
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
+        users[0].id     = res.body.user.id;
+        users[0].token  = res.body.token;
         done()
       });
     });
-  });
 
+    it ("200: Can update information", function(done){
+     request
+      .patch('localhost:8080/users/' + users[0].id)
+      .set('Content-Type', 'application/json')
+      .send('{"lastname": "clovis"}')
+      .set('Auth-Token', users[0].token)
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.user.lastname).exist;
+        expect(res.body.user.lastname).to.equal("clovis")
+        done()
+      });
+    });
+
+  });
 });

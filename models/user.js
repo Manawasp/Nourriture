@@ -38,7 +38,7 @@ User.methods.create_by_email = function(params) {
   this.followeds  = []
   this.avatar     = "/images/avatar.jpg"
   this.password   = crypto.createHash('md5').update(params.password).digest("hex");
-  this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
+  this.salt       = crypto.createHash('md5').update((new Date().toString() + mongoose.Types.ObjectId())).digest("hex");
   this.access     = ['consumer']
   if (this.pseudo == "superadmin") {
     this.access     = ['consumer', 'supplier', 'admin', 'gastronomist']
@@ -49,7 +49,7 @@ User.methods.create_by_email = function(params) {
 }
 
 User.methods.new_salt = function() {
-  this.salt       = crypto.createHash('md5').update((new Date().toString())).digest("hex");
+  this.salt       = crypto.createHash('md5').update((new Date().toString() + mongoose.Types.ObjectId())).digest("hex");
 }
 
 User.methods.update_information = function(params) {
@@ -67,7 +67,7 @@ User.methods.update_information = function(params) {
   this.email      = params.email      || this.email
   if (params.password) {
     this.password = crypto.createHash('md5').update(params.password).digest("hex");
-    this.salt     = crypto.createHash('md5').update((new Date().toString())).digest("hex");
+    this.salt       = crypto.createHash('md5').update((new Date().toString() + mongoose.Types.ObjectId())).digest("hex");
   }
   this.updated_at = new Date
   return null
@@ -107,9 +107,6 @@ User.methods.information = function() {
  */
 
 User.methods.auth_token = function() {
-  if (this.salt == undefined) {
-    this.salt = crypto.createHash('md5').update((new Date().toString())).digest("hex");
-  }
   return (jwt.sign({id: this._id, salt: this.salt, access: this.access}, secret));
 }
 
