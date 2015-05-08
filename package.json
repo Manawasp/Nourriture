@@ -19,6 +19,6 @@
     "cors": "*",
     "connect-multiparty": "*",
     "mongoose-random": "*",
-    "redis":"*",
+    "redis": "*"
   }
 }

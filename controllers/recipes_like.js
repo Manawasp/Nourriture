@@ -9,7 +9,7 @@ var express   = require('express')
   , User      = mongoose.model('User')
   , Recipe    = mongoose.model('Recipe')
   , auth      = require('./services/authentification');
- 
+
 /**
  * Router middleware
  */
