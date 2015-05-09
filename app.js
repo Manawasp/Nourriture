@@ -47,11 +47,11 @@ app.use(require('./controllers'));
 
 
 var buildDirPicture = function(path) {
-if (!fs.existsSync(__dirname + path)) {
-  fs.mkdirSync(__dirname + path, 0755, function(err){
-    if(err){console.log("Error:" + err);} })
-  console.log("CREATED :: dir `"+path+"`")
-}
+  if (!fs.existsSync(__dirname + path)) {
+    fs.mkdirSync(__dirname + path, 0755, function(err){
+      if(err){console.log("Error:" + err);} })
+    console.log("CREATED :: dir `"+path+"`")
+  }
 }
 
 buildDirPicture('/public/pictures')
