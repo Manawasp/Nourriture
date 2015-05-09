@@ -160,6 +160,33 @@ router.delete('/:rid', function(req, res){
 })
 
 /**
+ * [POST] Upload Picture
+ */
+
+router.delete('/:rid/pictures', function(req, res){
+ res.type('application/json');
+ Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
+   if (recipe) {
+     if (auth.access_admin() || recipe._id == auth.user_id()) {
+        if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
+          fs.writeFile(__dirname + '/../public/pictures/recipes/' + recipe._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
+            recipe.image = "http://localhost:8080/pictures/recipes/" + recipe._id + "." +  req.body.extend
+            valide_create(recipe, res)
+        } else {
+          res.send(400, {error: "bad type, only png and jpg are supported"})
+        }
+     }
+     else {
+       res.send(403, {error: "you don't have the permission"});
+     }
+   }
+   else {
+     res.send(404, {error: 'resource not found'})
+   }
+ });
+})
+
+/**
  * Export router
  */
 
