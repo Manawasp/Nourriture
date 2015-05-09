@@ -5,8 +5,8 @@ describe('Moment Controller', function(){
   var users = [{"id": 0, "token": ""},
                {"id": 0, "token": ""},
                {"id": 0, "token": ""}]
-  var ingredient1_id = "";
-  var ingredient2_id = "";
+  var ingredients = [ {"id": 0},
+                      {"id": 0}]
   var moment_id = "";
 
   before(function(done){
@@ -46,8 +46,8 @@ describe('Moment Controller', function(){
           expect(res.status).to.equal(200);
           expect(res.body.ingredients).to.exist;
           expect(res.body.ingredients.length).to.equal(2);
-          ingredient1_id = res.body.ingredients[0].id
-          ingredient2_id = res.body.ingredients[1].id
+          ingredients[0].id = res.body.ingredients[0].id
+          ingredients[1].id = res.body.ingredients[1].id
           done()
         });
       });
@@ -107,7 +107,7 @@ describe('Moment Controller', function(){
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
-      .send('{"description":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"]}')
+      .send('{"description":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"]}')
       .end(function(res)
       {
         expect(res).to.exist;
@@ -296,7 +296,7 @@ describe('Moment Controller', function(){
       .post('localhost:8080/moments')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
-      .send('{"description":"Pork with sugar", "ingredients": ["'+ingredient1_id+'", "'+ingredient2_id+'"]}')
+      .send('{"description":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"]}')
       .end(function(res)
       {
         expect(res).to.exist;

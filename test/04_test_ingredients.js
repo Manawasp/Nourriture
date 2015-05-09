@@ -5,8 +5,8 @@ describe('Ingredients Controller', function(){
   var users = [{"id": 0, "token": ""},
                {"id": 0, "token": ""},
                {"id": 0, "token": ""}]
-  var ingredient1_id = "";
-  var ingredient2_id = "";
+  var ingredients[0].id = "";
+  var ingredients[1].id = "";
 
   before(function(done){
    request
@@ -112,7 +112,7 @@ describe('Ingredients Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(200);
         expect(res.body.name).to.equal("chocolat");
-        ingredient1_id = res.body.id
+        ingredients[0].id = res.body.id
         done()
       });
     });
@@ -143,7 +143,7 @@ describe('Ingredients Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(200);
         expect(res.body.name).to.equal("pork");
-        ingredient2_id = res.body.id
+        ingredients[1].id = res.body.id
         expect(res.body.blacklist[0]).to.equal("musulman");
         done()
       });
@@ -169,7 +169,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .patch('localhost:8080/ingredients/'+ ingredient1_id)
+      .patch('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -183,7 +183,7 @@ describe('Ingredients Controller', function(){
 
     it ("403: don't have the permission", function(done){
      request
-      .patch('localhost:8080/ingredients/' + ingredient1_id)
+      .patch('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -213,7 +213,7 @@ describe('Ingredients Controller', function(){
 
     it ("200: update chocolat -> choco", function(done){
      request
-      .patch('localhost:8080/ingredients/' + ingredient1_id)
+      .patch('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{"name": "choco"}')
@@ -231,7 +231,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .get('localhost:8080/ingredients/'+ ingredient1_id)
+      .get('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -260,7 +260,7 @@ describe('Ingredients Controller', function(){
 
     it ("200: resource not found", function(done){
      request
-      .get('localhost:8080/ingredients/' + ingredient1_id)
+      .get('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -279,7 +279,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .del('localhost:8080/ingredients/'+ ingredient1_id)
+      .del('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -293,7 +293,7 @@ describe('Ingredients Controller', function(){
 
     it ("403: don't have the permission", function(done){
      request
-      .del('localhost:8080/ingredients/' + ingredient1_id)
+      .del('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -323,7 +323,7 @@ describe('Ingredients Controller', function(){
 
     it ("200: delete choco", function(done){
      request
-      .del('localhost:8080/ingredients/' + ingredient1_id)
+      .del('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
