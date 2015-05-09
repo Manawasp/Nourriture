@@ -12,20 +12,14 @@ var express     = require('express')
   , Ingredient  = mongoose.model('Ingredient')
   , Comment     = mongoose.model('Comment')
   , auth        = require('./services/authentification');
- 
+
 /**
  * Router middleware
  */
 
 router.use(function(req, res, next) {
-  error = auth.verify(req.header('Auth-Token'))
-  if (error != null) {
-    res.type('application/json');
-    res.send(error.code, error.json_value);
-  }
-  else {
-    next()
-  }
+  res.type('application/json');
+  auth.verify(req.header('Auth-Token'), res, next)
 })
 
 /**
@@ -205,9 +199,9 @@ var show_moment = function(moment, res) {
             users_data.push(users[i].information())
           }
         }
-        res.send(200, {created_by: create_by, 
+        res.send(200, {created_by: create_by,
                       ingredients: data_ingredient,
-                      users: users_data, 
+                      users: users_data,
                       moment: data_moment})
       });
     });

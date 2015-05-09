@@ -6,8 +6,12 @@
 var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
+  , fs        = require('fs')
   , User      = mongoose.model('User')
+  , Redis     = require("ioredis")
+  , redisClient = new Redis()
   , auth      = require('./services/authentification');
+  redisClient.setMaxListeners(0);
 
 /**
  * Router middleware
@@ -17,14 +21,8 @@ router.use(function(req, res, next) {
   if (req.path == '/') {
     next()
   } else {
-    error = auth.verify(req.header('Auth-Token'))
-    if (error != null) {
-      res.type('application/json');
-      res.send(error.code, error.json_value);
-    }
-    else {
-      next()
-    }
+    res.type('application/json');
+    auth.verify(req.header('Auth-Token'), res, next)
   }
 });
 
@@ -72,7 +70,7 @@ router.post('/', function(req, res){
     res.send(400, {error: error});
   }
   else {
-    uniqueness_email(user, res, valide_create)
+    uniqueness_email(user, req, res, valide_create)
   }
 })
 
@@ -113,10 +111,10 @@ router.patch('/:uid', function(req, res){
         else {
           error = u.update_information(req.body)
           if (error == null && req.body.email) {
-            uniqueness_email(u, res, valide_create)
+            uniqueness_email(u, req, res, valide_create)
           }
           else if (error == null){
-            valide_create(u, res)
+            valide_create(u, req, res)
           }
           else {
             res.send(400, {error: error})
@@ -155,6 +153,37 @@ router.delete('/:uid', function(req, res){
   });
 })
 
+
+/**
+ * [UPLOAD] User avatar
+ */
+
+router.post('/:uid/pictures', function(req, res) {
+  res.type('application/json');
+  User.findOne({'_id': req.params.uid}, '', function (err, u) {
+    if (u) {
+      if (u._id == auth.user_id())
+      {
+        if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined){
+          fs.writeFile(__dirname + '/../public/pictures/avatars/' + u._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
+          u.avatar = "http://localhost:8080/pictures/avatars/" + u._id + "." +  req.body.extend
+          valide_create(u, req, res)
+        }
+        else {
+          res.send(400, {error: "bad type, only png and jpg are supported"})
+        }
+      }
+      else {
+        res.send(403, {error: "you don't have the permission"})
+      }
+    }
+    else {
+      res.send(404, {error: "resource not found"})
+    }
+  });
+})
+
+
 /**
  * Export router
  */
@@ -165,18 +194,24 @@ module.exports = router
  * Private method
  */
 
-var uniqueness_email = function(user, res, callback) {
+var uniqueness_email = function(user, req, res, callback) {
   User.findOne({'email': user.email}, '', function (err, user_data) {
     if (user_data) {
       res.send(400, {error: "this email is already taken"})
     }
     else {
-      callback(user, res)
+      callback(user, req, res)
     }
   });
 }
 
-var valide_create = function(user, res) {
+var valide_create = function(user, req, res) {
   user.save()
+  if (req.method == "POST" && req.path == '/') {
+    user.new_salt();
+    redisClient.lpush(["user:" + user._id + ":token", user.salt], function(err, result){
+      // redisClient.quit();
+    });
+  }
   res.send(200, {token: user.auth_token(), user: user.personal_information()})
 }

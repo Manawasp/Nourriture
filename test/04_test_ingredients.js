@@ -1,13 +1,13 @@
-var request = require('superagent'),
-  expect = require('expect.js');
-  
+var request = require('superagent')
+  , expect  = require('expect.js')
+  , fs      = require('fs');
+
 describe('Ingredients Controller', function(){
-  var user1_token = "";
-  var user1_id = undefined;
-  var user2_token = "";
-  var user2_id = undefined;
-  var ingredient1_id = "";
-  var ingredient2_id = "";
+  var users = [{"id": 0, "token": ""},
+               {"id": 0, "token": ""},
+               {"id": 0, "token": ""}]
+  var ingredients = [ {"id": 0},
+                      {"id": 0}]
 
   before(function(done){
    request
@@ -21,8 +21,8 @@ describe('Ingredients Controller', function(){
       expect(res.body.token).to.exist;
       expect(res.body.user).to.exist;
       expect(res.body.user.id).to.exist;
-      user1_id = res.body.user.id;
-      user1_token = res.body.token
+      users[0].id = res.body.user.id;
+      users[0].token = res.body.token
       request
         .post('localhost:8080/sessions')
         .send('{"email": "superadmin@gmail.com", "password": "Superadmin59"}')
@@ -34,8 +34,8 @@ describe('Ingredients Controller', function(){
         expect(res.body.token).to.exist;
         expect(res.body.user).to.exist;
         expect(res.body.user.id).to.exist;
-        user2_id = res.body.user.id;
-        user2_token = res.body.token
+        users[1].id = res.body.user.id;
+        users[1].token = res.body.token
         done()
       });
     });
@@ -61,7 +61,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -76,7 +76,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -91,7 +91,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"a"}')
       .end(function(res)
       {
@@ -106,14 +106,14 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"chocolat"}')
       .end(function(res)
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
         expect(res.body.name).to.equal("chocolat");
-        ingredient1_id = res.body.id
+        ingredients[0].id = res.body.id
         done()
       });
     });
@@ -122,7 +122,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"sugar"}')
       .end(function(res)
       {
@@ -137,14 +137,14 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"pork", "blacklist": ["musulman"]}')
       .end(function(res)
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
         expect(res.body.name).to.equal("pork");
-        ingredient2_id = res.body.id
+        ingredients[1].id = res.body.id
         expect(res.body.blacklist[0]).to.equal("musulman");
         done()
       });
@@ -154,7 +154,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name":"pork", "blacklist": ["musulman"]}')
       .end(function(res)
       {
@@ -170,7 +170,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .patch('localhost:8080/ingredients/'+ ingredient1_id)
+      .patch('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -184,9 +184,9 @@ describe('Ingredients Controller', function(){
 
     it ("403: don't have the permission", function(done){
      request
-      .patch('localhost:8080/ingredients/' + ingredient1_id)
+      .patch('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -201,7 +201,7 @@ describe('Ingredients Controller', function(){
      request
       .patch('localhost:8080/ingredients/diowjoidw')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -214,9 +214,9 @@ describe('Ingredients Controller', function(){
 
     it ("200: update chocolat -> choco", function(done){
      request
-      .patch('localhost:8080/ingredients/' + ingredient1_id)
+      .patch('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{"name": "choco"}')
       .end(function(res)
       {
@@ -232,7 +232,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .get('localhost:8080/ingredients/'+ ingredient1_id)
+      .get('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -248,7 +248,7 @@ describe('Ingredients Controller', function(){
      request
       .get('localhost:8080/ingredients/fokjwpo')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -261,9 +261,9 @@ describe('Ingredients Controller', function(){
 
     it ("200: resource not found", function(done){
      request
-      .get('localhost:8080/ingredients/' + ingredient1_id)
+      .get('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -280,7 +280,7 @@ describe('Ingredients Controller', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .del('localhost:8080/ingredients/'+ ingredient1_id)
+      .del('localhost:8080/ingredients/'+ ingredients[0].id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -294,9 +294,9 @@ describe('Ingredients Controller', function(){
 
     it ("403: don't have the permission", function(done){
      request
-      .del('localhost:8080/ingredients/' + ingredient1_id)
+      .del('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -311,7 +311,7 @@ describe('Ingredients Controller', function(){
      request
       .del('localhost:8080/ingredients/fokjwpo')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -324,9 +324,9 @@ describe('Ingredients Controller', function(){
 
     it ("200: delete choco", function(done){
      request
-      .del('localhost:8080/ingredients/' + ingredient1_id)
+      .del('localhost:8080/ingredients/' + ingredients[0].id)
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user2_token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -358,7 +358,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -379,7 +379,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"name":"ug"}')
       .end(function(res)
       {
@@ -400,7 +400,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"offset":1}')
       .end(function(res)
       {
@@ -420,7 +420,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"limit":1}')
       .end(function(res)
       {
@@ -441,7 +441,7 @@ describe('Ingredients Controller', function(){
      request
       .post('localhost:8080/ingredients/search')
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', user1_token)
+      .set('Auth-Token', users[0].token)
       .send('{"blacklist":["musulman"]}')
       .end(function(res)
       {
@@ -459,4 +459,89 @@ describe('Ingredients Controller', function(){
 
   });
 
+  describe('Upload image', function(){
+    var base64Image = undefined
+
+    before(function(done){
+      fs.readFile(__dirname + '/datas/ingredient.jpg', function(err, original_data){
+        base64Image = new Buffer(original_data, 'binary').toString('base64');
+        done();
+      });
+    });
+
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("you need to be connected");
+        done()
+      });
+    });
+
+    it ("403: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[0].token)
+      .send('{}')
+      .end(function(res)
+      {
+        console.log(res.body)
+        expect(res).to.exist;
+        expect(res.status).to.equal(403);
+        expect(res.body.error).to.equal("you don't have the permission");
+        done()
+      });
+    });
+
+    it ("400: no parameter `extend`", function(done){
+     request
+      .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal("bad type, only png and jpg are supported");
+        done()
+      });
+    });
+
+    it ("400: no parameter `picture`", function(done){
+     request
+      .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{"extend":"png"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal("bad type, only png and jpg are supported");
+        done()
+      });
+    });
+
+    it ("200: image uploaded (base64)", function(done){
+     request
+      .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{"extend":"jpg","picture":"'+base64Image+'"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.icon).to.equal("http://localhost:8080/pictures/ingredients/" + ingredients[1].id +".jpg");
+        done()
+      });
+    });
+  });
 });

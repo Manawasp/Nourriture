@@ -6,23 +6,18 @@
 var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
+  , fs        = require('fs')
   , User      = mongoose.model('User')
   , Ingredient= mongoose.model('Ingredient')
   , auth      = require('./services/authentification');
-  
+
 /**
  * Router middleware
  */
 
 router.use(function(req, res, next) {
-  error = auth.verify(req.header('Auth-Token'))
-  if (error != null) {
-    res.type('application/json');
-    res.send(error.code, error.json_value);
-  }
-  else {
-    next()
-  }
+  res.type('application/json');
+  auth.verify(req.header('Auth-Token'), res, next)
 })
 
 /**
@@ -137,6 +132,33 @@ router.delete('/:uid', function(req, res){
       if (ingredient) {
         ingredient.remove()
         res.send(200, {success: 'ingredient removed'})
+      }
+      else {
+        res.send(404, {error: 'resource not found'})
+      }
+    });
+  }
+  else {
+    res.send(403, {error: "you don't have the permission"});
+  }
+})
+
+/**
+ * [POST] Upload picture
+ */
+
+router.post('/:uid/pictures', function(req, res){
+  res.type('application/json');
+  if (auth.access_supplier()) {
+    Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
+      if (ingredient) {
+        if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
+          fs.writeFile(__dirname + '/../public/pictures/ingredients/' + ingredient._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
+            ingredient.icon = "http://localhost:8080/pictures/ingredients/" + ingredient._id + "." +  req.body.extend
+          valid_create_ingredient(ingredient, res)
+        } else {
+          res.send(400, {error: "bad type, only png and jpg are supported"})
+        }
       }
       else {
         res.send(404, {error: 'resource not found'})
