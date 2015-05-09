@@ -500,4 +500,90 @@ describe('Recipes Controller', function(){
     });
 
   });
+
+  describe('Upload Picture', function(){
+    var base64Image = undefined
+
+    before(function(done){
+      fs.readFile(__dirname + '/datas/recipe.jpg', function(err, original_data){
+        base64Image = new Buffer(original_data, 'binary').toString('base64');
+        done();
+      });
+    });
+
+    it ("401: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/recipes/' + recipe_id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(401);
+        expect(res.body.error).to.equal("you need to be connected");
+        done()
+      });
+    });
+
+    it ("403: unhautorized if not connected", function(done){
+     request
+      .post('localhost:8080/recipes/' + recipe_id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(403);
+        expect(res.body.error).to.equal("you don't have the permission");
+        done()
+      });
+    });
+
+    it ("400: no parameter `extend`", function(done){
+     request
+      .post('localhost:8080/recipes/' + recipe_id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[0].token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal("bad type, only png and jpg are supported");
+        done()
+      });
+    });
+
+    it ("400: no parameter `picture`", function(done){
+     request
+      .post('localhost:8080/recipes/' + recipe_id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[0].token)
+      .send('{"extend":"png"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal("bad type, only png and jpg are supported");
+        done()
+      });
+    });
+
+    it ("200: image uploaded (base64)", function(done){
+     request
+      .post('localhost:8080/recipes/' + recipe_id + "/pictures")
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[0].token)
+      .send('{"extend":"jpg","picture":"'+base64Image+'"}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.user.id).to.equal(users[0].id);
+        expect(res.body.user.avatar).to.equal("http://localhost:8080/pictures/avatars/" +users[0].id +".png");
+        done()
+      });
+    });
+  });
 });
