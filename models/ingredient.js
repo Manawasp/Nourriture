@@ -72,7 +72,6 @@ Ingredient.methods.update = function(params) {
 Ingredient.methods.information = function() {
   return {id:         this._id,
           name:       this.name,
-          image:      this.image,
           icon:       this.icon,
           color:      this.color,
           labels:     this.labels,
