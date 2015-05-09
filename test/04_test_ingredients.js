@@ -5,8 +5,8 @@ describe('Ingredients Controller', function(){
   var users = [{"id": 0, "token": ""},
                {"id": 0, "token": ""},
                {"id": 0, "token": ""}]
-  var ingredients[0].id = "";
-  var ingredients[1].id = "";
+  var ingredients = [ {"id": 0},
+                      {"id": 0}]
 
   before(function(done){
    request

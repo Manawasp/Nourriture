@@ -1,5 +1,6 @@
-var request = require('superagent'),
-  expect = require('expect.js');
+var request = require('superagent')
+  , expect  = require('expect.js')
+  , fs      = require('fs');
 
 describe('Recipes Controller', function(){
   var users = [{"id": 0, "token": ""},
@@ -529,7 +530,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/' + recipe_id + "/pictures")
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[1].token)
+      .set('Auth-Token', users[0].token)
       .send('{}')
       .end(function(res)
       {
@@ -544,7 +545,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/' + recipe_id + "/pictures")
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[0].token)
+      .set('Auth-Token', users[1].token)
       .send('{}')
       .end(function(res)
       {
@@ -559,7 +560,7 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/' + recipe_id + "/pictures")
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[0].token)
+      .set('Auth-Token', users[1].token)
       .send('{"extend":"png"}')
       .end(function(res)
       {
@@ -574,14 +575,13 @@ describe('Recipes Controller', function(){
      request
       .post('localhost:8080/recipes/' + recipe_id + "/pictures")
       .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[0].token)
+      .set('Auth-Token', users[1].token)
       .send('{"extend":"jpg","picture":"'+base64Image+'"}')
       .end(function(res)
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.user.id).to.equal(users[0].id);
-        expect(res.body.user.avatar).to.equal("http://localhost:8080/pictures/avatars/" +users[0].id +".png");
+        expect(res.body.recipe.image).to.equal("http://localhost:8080/pictures/recipes/" +recipe_id +".jpg");
         done()
       });
     });

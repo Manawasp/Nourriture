@@ -5,6 +5,7 @@
 
 var express     = require('express')
   , router      = express.Router()
+  , fs          = require('fs')
   , mongoose    = require('mongoose')
   , User        = mongoose.model('User')
   , Ingredient  = mongoose.model('Ingredient')
@@ -163,7 +164,7 @@ router.delete('/:rid', function(req, res){
  * [POST] Upload Picture
  */
 
-router.delete('/:rid/pictures', function(req, res){
+router.post('/:rid/pictures', function(req, res){
  res.type('application/json');
  Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
    if (recipe) {
@@ -171,7 +172,7 @@ router.delete('/:rid/pictures', function(req, res){
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
           fs.writeFile(__dirname + '/../public/pictures/recipes/' + recipe._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
             recipe.image = "http://localhost:8080/pictures/recipes/" + recipe._id + "." +  req.body.extend
-            valide_create(recipe, res)
+            valid_create_recipe(recipe, res)
         } else {
           res.send(400, {error: "bad type, only png and jpg are supported"})
         }

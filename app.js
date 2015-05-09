@@ -28,8 +28,8 @@ var app         = express()
  * init parser json
  */
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '8mb' }));
+app.use(bodyParser.json({limit: '8mb'}));
 console.log(path.join(__dirname, 'public'))
 app.use("/pictures", express.static(path.join(__dirname, 'public/pictures')));
 app.use(cors());
