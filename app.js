@@ -36,6 +36,14 @@ app.use("/pictures", express.static(path.join(__dirname, 'public/pictures')));
 app.use(cors());
 
 /**
+ * Handle internal error 500
+ */
+
+app.use(function(err, req, res, next) {
+  res.send(err.status || 500, {error: err.message || "internal error"});
+});
+
+/**
  * Initialization
  */
 

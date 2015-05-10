@@ -17,5 +17,5 @@
 
 /public/user/
 node_modules/
-public/pictures/*
+public/pictures/
 *.log
