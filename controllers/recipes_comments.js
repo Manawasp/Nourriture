@@ -70,7 +70,7 @@ router.post('/:rid', function(req, res){
       else {
         recipe.add_comment(comment._id)
         comment.save()
-        show_comment(comment, res)
+        show_comment(comment, req, res)
       }
     }
     else {
@@ -89,7 +89,7 @@ router.get('/:rid/:mid', function(req, res){
   res.type('application/json');
   Comment.findOne({'_id': req.params.mid}, '', function(err, comment) {
     if (comment) {
-      show_comment(comment, res)
+      show_comment(comment, req, res)
     }
     else {
       rData = {error: 'resource not found'}
@@ -115,7 +115,7 @@ router.patch('/:rid/:mid', function(req, res){
           res.send(400, {error: error})
         } else {
           comment.save()
-          show_comment(comment, res)
+          show_comment(comment, req, res)
         }
       } else {
         rData = {error: "you don't have the permission"}
@@ -168,7 +168,7 @@ module.exports = router
  * Private method
  */
 
-var show_comment = function(comment, res) {
+var show_comment = function(comment, req, res) {
   rData = comment.information()
   log.writeLog(req, "recipesComments", 200, rData)
   res.send(200, rData)

@@ -102,7 +102,7 @@ router.post('/', function(req, res){
     res.send(400, rData)
   }
   else {
-    valid_create_moment(moment, res)
+    valid_create_moment(moment, req, res)
   }
 })
 
@@ -114,7 +114,7 @@ router.get('/:mid', function(req, res){
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      show_moment(moment, res)
+      show_moment(moment, req, res)
     }
     else {
       rData = {error: 'resource not found'}
@@ -140,7 +140,7 @@ router.patch('/:mid', function(req, res){
           res.send(400, rData)
         }
         else {
-          valid_create_moment(moment, res)
+          valid_create_moment(moment, req, res)
         }
       }
       else {
@@ -196,12 +196,12 @@ module.exports = router
  * Private method
  */
 
-var valid_create_moment = function(moment, res) {
+var valid_create_moment = function(moment, req, res) {
   moment.save()
-  show_moment(moment, res)
+  show_moment(moment, req, res)
 }
 
-var show_moment = function(moment, res) {
+var show_moment = function(moment, req, res) {
   data_moment = moment.information()
   User.findOne({'_id': moment.created_by}, '', function(err, user) {
     create_by = {}

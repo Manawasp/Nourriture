@@ -78,7 +78,7 @@ router.post('/', function(req, res){
       res.send(400, rData)
     }
     else {
-      uniqueness_ingredient(ingredient, res, valid_create_ingredient)
+      uniqueness_ingredient(ingredient, req, res, valid_create_ingredient)
     }
   }
   else {
@@ -123,7 +123,7 @@ router.patch('/:uid', function(req, res){
           res.send(400, rData)
         }
         else {
-          valid_create_ingredient(ingredient, res)
+          valid_create_ingredient(ingredient, req, res)
         }
       }
       else {
@@ -180,7 +180,7 @@ router.post('/:uid/pictures', function(req, res){
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
           fs.writeFile(__dirname + '/../public/pictures/ingredients/' + ingredient._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
             ingredient.icon = "http://localhost:8080/pictures/ingredients/" + ingredient._id + "." +  req.body.extend
-          valid_create_ingredient(ingredient, res)
+          valid_create_ingredient(ingredient, req, res)
         } else {
           rData = {error: "bad type, only png and jpg are supported"}
           log.writeLog(req, "ingredients", 400, rData)
@@ -211,7 +211,7 @@ module.exports = router
  * Private method
  */
 
- var uniqueness_ingredient = function(ingredient, res, callback) {
+ var uniqueness_ingredient = function(ingredient, req, res, callback) {
   Ingredient.findOne({'name': ingredient.name}, '', function(err, ingredient_data) {
     if (ingredient_data) {
       rData = {error: 'this ingredient already exist'}
@@ -219,12 +219,12 @@ module.exports = router
       res.send(400, rData)
     }
     else {
-      callback(ingredient, res)
+      callback(ingredient, req, res)
     }
   });
  }
 
-var valid_create_ingredient = function(ingredient, res) {
+var valid_create_ingredient = function(ingredient, req, res) {
   ingredient.save()
   rData = ingredient.information()
   log.writeLog(req, "ingredients", 200, rData)

@@ -89,11 +89,11 @@ router.post('/', function(req, res){
     error = recipe.create(req.body, auth.user_id())
     if (error) {
       rData = {error: error}
-      log.writeLog(req, "recipes", 200, rData)
-      res.send(200, rData)
+      log.writeLog(req, "recipes", 400, rData)
+      res.send(400, rData)
     }
     else {
-      valid_create_recipe(recipe, res)
+      valid_create_recipe(recipe, req, res)
     }
   }
   else {
@@ -111,12 +111,12 @@ router.get('/:rid', function(req, res){
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
-      show_recipe(recipe, res)
+      show_recipe(recipe, req, res)
     }
     else {
       rData = {error: 'resource not found'}
-      log.writeLog(req, "recipes", 200, rData)
-      res.send(200, rData)
+      log.writeLog(req, "recipes", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -137,7 +137,7 @@ router.patch('/:rid', function(req, res){
           res.send(400, rData)
         }
         else {
-          valid_create_recipe(recipe, res)
+          valid_create_recipe(recipe, req, res)
         }
       }
       else {
@@ -195,7 +195,7 @@ router.post('/:rid/pictures', function(req, res){
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
           fs.writeFile(__dirname + '/../public/pictures/recipes/' + recipe._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
             recipe.image = "http://localhost:8080/pictures/recipes/" + recipe._id + "." +  req.body.extend
-            valid_create_recipe(recipe, res)
+            valid_create_recipe(recipe, req, res)
         } else {
           res.send(400, {error: "bad type, only png and jpg are supported"})
         }
@@ -220,12 +220,12 @@ module.exports = router
  * Private method
  */
 
-var valid_create_recipe = function(recipe, res) {
+var valid_create_recipe = function(recipe, req, res) {
   recipe.save()
-  show_recipe(recipe, res)
+  show_recipe(recipe, req, res)
 }
 
-var show_recipe = function(recipe, res) {
+var show_recipe = function(recipe, req, res) {
   data_recipe = recipe.information()
   User.findOne({'_id': recipe.created_by}, '', function(err, user) {
     data_user = {}
