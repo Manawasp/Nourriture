@@ -9,7 +9,8 @@ var express   = require('express')
   , User      = mongoose.model('User')
   , Recipe    = mongoose.model('Recipe')
   , Comment   = mongoose.model('Comment')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -36,14 +37,18 @@ router.post('/:rid/search', function(req, res){
   query.exec(function (err, comments) {
     data_comment = []
     if (err) {
-      res.send(500, {error: "f(router.post'/search')"})
+      rData = {error: "f(router.post'/search')"}
+      log.writeLog(req, "recipesComments", 200, rData)
+      res.send(500, rData)
     }
     else if (comments) {
       for (var i = 0; i < comments.length; i++) {
         data_comment.push(comments[i].information())
       }
     }
-    res.send(200, {comments: data_comment, limit: limit, offset: offset, size: data_comment.length})
+    rData = {comments: data_comment, limit: limit, offset: offset, size: data_comment.length}
+    log.writeLog(req, "recipesComments", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -58,7 +63,9 @@ router.post('/:rid', function(req, res){
       comment = new Comment;
       error = comment.create(req.body, auth.user_id(), recipe._id)
       if (error) {
-        res.send(400, {error: error})
+        rData = {error: error}
+        log.writeLog(req, "recipesComments", 200, rData)
+        res.send(400, rData)
       }
       else {
         recipe.add_comment(comment._id)
@@ -67,7 +74,9 @@ router.post('/:rid', function(req, res){
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesComments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -83,7 +92,9 @@ router.get('/:rid/:mid', function(req, res){
       show_comment(comment, res)
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesComments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -99,17 +110,23 @@ router.patch('/:rid/:mid', function(req, res){
       if (auth.user_id() == comment.created_by) {
         error = comment.update(req.body)
         if (error) {
+          rData = {error: error}
+          log.writeLog(req, "recipesComments", 400, rData)
           res.send(400, {error: error})
         } else {
           comment.save()
           show_comment(comment, res)
         }
       } else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "recipesComments", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesComments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -124,13 +141,19 @@ router.delete('/:rid/:mid', function(req, res){
     if (comment) {
       if (auth.user_id() == comment.created_by) {
         comment.remove()
-        res.send(200, {success: 'comment removed'})
+        rData = {success: 'comment removed'}
+        log.writeLog(req, "recipesComments", 200, rData)
+        res.send(200, rData)
       } else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "recipesComments", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesComments", 200, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -146,5 +169,7 @@ module.exports = router
  */
 
 var show_comment = function(comment, res) {
-  res.send(200, comment.information())
+  rData = comment.information()
+  log.writeLog(req, "recipesComments", 200, rData)
+  res.send(200, rData)
 }

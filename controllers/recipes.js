@@ -9,9 +9,10 @@ var express     = require('express')
   , mongoose    = require('mongoose')
   , User        = mongoose.model('User')
   , Ingredient  = mongoose.model('Ingredient')
-  , Comment      = mongoose.model('Comment')
+  , Comment     = mongoose.model('Comment')
   , Recipe      = mongoose.model('Recipe')
-  , auth      = require('./services/authentification');
+  , auth        = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -62,14 +63,18 @@ router.post('/search', function(req, res){
   query.exec(function (err, recipes) {
     data_recipes = []
     if (err) {
-      res.send(500, {error: "recipes: f(router.post'/search')"})
+      rData = {error: "recipes: f(router.post'/search')"}
+      log.writeLog(req, "recipes", 500, rData)
+      res.send(500, rData)
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
         data_recipes.push(recipes[i].information())
       }
     }
-    res.send(200, {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length})
+    rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length}
+    log.writeLog(req, "recipes", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -83,14 +88,18 @@ router.post('/', function(req, res){
     recipe = new Recipe;
     error = recipe.create(req.body, auth.user_id())
     if (error) {
-      res.send(400, {error: error})
+      rData = {error: error}
+      log.writeLog(req, "recipes", 200, rData)
+      res.send(200, rData)
     }
     else {
       valid_create_recipe(recipe, res)
     }
   }
   else {
-    res.send(403, {error: "you don't have the permission"});
+    rData = {error: "you don't have the permission"}
+    log.writeLog(req, "recipes", 403, rData)
+    res.send(403, rData);
   }
 })
 
@@ -105,7 +114,9 @@ router.get('/:rid', function(req, res){
       show_recipe(recipe, res)
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipes", 200, rData)
+      res.send(200, rData)
     }
   });
 })
@@ -121,17 +132,23 @@ router.patch('/:rid', function(req, res){
       if (auth.access_admin() || recipe.create_by == auth.user_id()) {
         error = recipe.update(req.body)
         if (error) {
-          res.send(400, {error: error})
+          rData = {error: error}
+          log.writeLog(req, "recipes", 400, rData)
+          res.send(400, rData)
         }
         else {
           valid_create_recipe(recipe, res)
         }
       }
       else {
-        res.send(403, {error: "you don't have the permission"});
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "recipes", 403, rData)
+        res.send(403, rData);
       }
     }
     else {
+      rData = {error: "you don't have the permission"}
+      log.writeLog(req, "recipes", 404, rData)
       res.send(404, {error: 'resource not found'})
     }
   });
@@ -148,14 +165,20 @@ router.delete('/:rid', function(req, res){
       if (auth.access_admin() || recipe._id == auth.user_id()) {
         // Comment.find({'_id': recipe.comments}).remove()
         recipe.remove()
-        res.send(200, {success: 'recipe removed'})
+        rData = {success: 'recipe removed'}
+        log.writeLog(req, "recipes", 200, rData)
+        res.send(200, rData)
       }
       else {
-        res.send(403, {error: "you don't have the permission"});
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "recipes", 403, rData)
+        res.send(403, rData);
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipes", 404, rData)
+      res.send(404, rData)
     }
   });
 })

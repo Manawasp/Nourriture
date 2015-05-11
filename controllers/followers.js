@@ -7,7 +7,8 @@ var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -35,16 +36,30 @@ router.post('/', function(req, res){
             if (error == null) {
               current_user.save()
               user_cible.save()
-              res.send(200, user_cible.information())
+              rData = user_cible.information()
+              log.writeLog(req, "followers", 200, rData)
+              res.send(200, rData)
             }
-            else {res.send(400, {error: error})}
+            else {
+              rData = {error: error}
+              log.writeLog(req, "followers", 400, rData)
+              res.send(400, rData)}
           }
-          else {res.send(404, {error: "resource not found"})}
+          else {
+            rData = {error: "resource not found"}
+            log.writeLog(req, "followers", 404, rData)
+            res.send(404, rData)}
         });
       }
-      else {res.send(400, {error: "bad request"})}
+      else {
+        rData = {error: "bad request"}
+        log.writeLog(req, "followers", 400, rData)
+        res.send(400, rData)}
     }
-    else {res.send(404, {error: "account invalid"})}
+    else {
+      rData = {error: "account invalid"}
+      log.writeLog(req, "followers", 404, rData)
+      res.send(404, rData)}
   });
 })
 
@@ -63,10 +78,14 @@ router.get('/:uid', function(req, res){
             followers_data.push(users[i].information())
           }
         }
+        log.writeLog(req, "followers", 200, followers_data)
         res.send(200, followers_data)
       });
     }
-    else {res.send(404, {error: "resource not found"})}
+    else {
+      rData = {error: "resource not found"}
+      log.writeLog(req, "followers", 404, rData)
+      res.send(404, rData)}
   });
 })
 
@@ -87,16 +106,30 @@ router.delete('/:uid', function(req, res){
             if (error == null) {
               current_user.save()
               user_cible.save()
-              res.send(200, {success: 'user is removed to your follower'})
+              rData = {success: 'user is removed to your follower'}
+              log.writeLog(req, "followers", 200, rData)
+              res.send(200, rData)
             }
-            else {res.send(400, {error: error})}
+            else {
+              rData = {error: error}
+              log.writeLog(req, "followers", 400, rData)
+              res.send(400, {error: error})}
           }
-          else {res.send(404, {error: "resource not found"})}
+          else {
+            rData = {error: "resource not found"}
+            log.writeLog(req, "followers", 404, rData)
+            res.send(404, rData)}
         });
       }
-      else {res.send(400, {error: "bad request"})}
+      else {
+        rData = {error: "bad request"}
+        log.writeLog(req, "followers", 400, rData)
+        res.send(400, rData)}
     }
-    else {res.send(404, {error: "account invalid"})}
+    else {
+      rData = {error: "account invalid"}
+      log.writeLog(req, "followers", 404, rData)
+      res.send(404, rData)}
   });
 })
 

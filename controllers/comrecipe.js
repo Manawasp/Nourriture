@@ -11,13 +11,14 @@ var express     = require('express')
   , Comment     = mongoose.model('Comment')
   , Recipe      = mongoose.model('Recipe')
   , auth        = require('./services/authentification')
-  , random    = require('mongoose-random');
+  , random      = require('mongoose-random')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
  */
 
- router.use(function(req, res, next) {
+router.use(function(req, res, next) {
   res.type('application/json');
   auth.verify(req.header('Auth-Token'), res, next)
 })
@@ -34,14 +35,18 @@ router.get('/latest', function(req, res){
   Recipe.find().limit(4).exec(function (err, recipes) {
    data_recipes = []
     if (err) {
-      res.send(500, {error: "recipes: f(router.post'/search')"})
+      rData = {error: "recipes: f(router.post'/search')"}
+      log.writeLog(req, "commentRecipe", 500, rData)
+      res.send(500, rData)
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
         data_recipes.push(recipes[i].information())
       }
     }
-    res.send(200, {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length})
+    rData = {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length}
+    log.writeLog(req, "commentRecipe", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -56,14 +61,18 @@ router.get('/random', function(req, res){
   Recipe.findRandom().limit(4).exec(function (err, recipes) {
    data_recipes = []
     if (err) {
-      res.send(500, {error: "recipes: f(router.post'/search')"})
+      rData = {error: "recipes: f(router.get'/random')"}
+      log.writeLog(req, "commentRecipe", 500, rData)
+      res.send(500, rData)
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
         data_recipes.push(recipes[i].information())
       }
     }
-    res.send(200, {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length})
+    rData = {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length}
+    log.writeLog(req, "commentRecipe", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -78,14 +87,18 @@ router.get('/month', function(req, res){
   Recipe.findRandom().limit(4).exec(function (err, recipes) {
    data_recipes = []
     if (err) {
-      res.send(500, {error: "recipes: f(router.post'/search')"})
+      rData = {error: "recipes: f(router.get'/month')"}
+      log.writeLog(req, "commentRecipe", 500, rData)
+      res.send(500, rData)
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
         data_recipes.push(recipes[i].information())
       }
     }
-    res.send(200, {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length})
+    rData = {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length}
+    log.writeLog(req, "commentRecipe", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -100,14 +113,18 @@ router.get('/week', function(req, res){
   Recipe.findRandom().limit(1).exec(function (err, recipes) {
    data_recipes = []
     if (err) {
-      res.send(500, {error: "recipes: f(router.post'/search')"})
+      rData = {error: "recipes: f(router.get'/week')"}
+      log.writeLog(req, "commentRecipe", 500, rData)
+      res.send(500, rData)
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
         data_recipes.push(recipes[i].information())
       }
     }
-    res.send(200, {recipes: data_recipes, limit: 1, offset: 0, size: data_recipes.length})
+    rData = {recipes: data_recipes, limit: 1, offset: 0, size: data_recipes.length}
+    log.writeLog(req, "commentRecipe", 200, rData)
+    res.send(200, rData)
   });
 })
 
