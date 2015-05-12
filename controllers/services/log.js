@@ -22,5 +22,5 @@ exports.writeLog = function(req, resource, status, resBody) {
 						"res": {
 							"body": resBody
 						}
-						})
+					})
 }

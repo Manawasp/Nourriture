@@ -192,8 +192,9 @@ router.post('/:uid/pictures', function(req, res) {
       if (u._id == auth.user_id())
       {
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined){
-          fs.writeFile(__dirname + '/../public/pictures/avatars/' + u._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
-          u.avatar = "http://localhost:8080/pictures/avatars/" + u._id + "." +  req.body.extend
+          fileName = u._id + (Math.floor((Math.random() * 10000) + 1)).toString() + "." +  req.body.extend
+          fs.writeFile(__dirname + '/../public/pictures/avatars/' + fileName, new Buffer(req.body.picture, "base64"), function(err) {});
+          u.avatar = "http://localhost:8080/pictures/avatars/"+ fileName
           valide_create(u, req, res)
         }
         else {

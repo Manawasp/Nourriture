@@ -178,8 +178,9 @@ router.post('/:uid/pictures', function(req, res){
     Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
       if (ingredient) {
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
-          fs.writeFile(__dirname + '/../public/pictures/ingredients/' + ingredient._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
-            ingredient.icon = "http://localhost:8080/pictures/ingredients/" + ingredient._id + "." +  req.body.extend
+          fileName = ingredient._id + (Math.floor((Math.random() * 10000) + 1)).toString() + "." +  req.body.extend
+          fs.writeFile(__dirname + '/../public/pictures/ingredients/' + fileName, new Buffer(req.body.picture, "base64"), function(err) {});
+            ingredient.icon = "http://localhost:8080/pictures/ingredients/" + fileName
           valid_create_ingredient(ingredient, req, res)
         } else {
           rData = {error: "bad type, only png and jpg are supported"}

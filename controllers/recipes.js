@@ -193,8 +193,9 @@ router.post('/:rid/pictures', function(req, res){
    if (recipe) {
      if (auth.access_admin() || recipe._id == auth.user_id()) {
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
-          fs.writeFile(__dirname + '/../public/pictures/recipes/' + recipe._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
-            recipe.image = "http://localhost:8080/pictures/recipes/" + recipe._id + "." +  req.body.extend
+          fileName = recipe._id + (Math.floor((Math.random() * 10000) + 1)).toString() + "." +  req.body.extend
+          fs.writeFile(__dirname + '/../public/pictures/recipes/' + fileName, new Buffer(req.body.picture, "base64"), function(err) {});
+            recipe.image = "http://localhost:8080/pictures/recipes/" + fileName
             valid_create_recipe(recipe, req, res)
         } else {
           res.send(400, {error: "bad type, only png and jpg are supported"})
