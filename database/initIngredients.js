@@ -280,7 +280,64 @@ describe('Ingredients Controller', function(){
       createIngredient("mango", "Mango.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
+      createIngredient("plum", "Plum.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("meringues", "Meringues.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("mascarpone", "Mascarpone.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("oats", "Oats.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("seeds", "Seeds.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("nuts", "Nuts.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("soy sauce", "Soy_sauce.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("ginger", "Ginger.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("almonds", "Almonds.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("sake", "Sake.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("leek", "Leek.jpg", "jpg", done)
+    });
+	it ("200: ingredient is uniq", function(done){
+      createIngredient("honey", "Honey.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("ham", "Ham.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("bread", "Bread.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("chedar", "Chedar.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("Worcestershire sauce", "Worcestershire_sauce.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("thyme", "Thyme.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("lamb", "Lamb.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("potato", "Potato.jpg", "jpg", done)
+    });
+    it ("200: ingredient is uniq", function(done){
+      createIngredient("parsley", "Parsley.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
       createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
@@ -309,10 +366,6 @@ describe('Ingredients Controller', function(){
     it ("200: ingredient is uniq", function(done){
       createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
     });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-
 
   })
 
