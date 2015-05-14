@@ -17,8 +17,12 @@ var express   = require('express')
  */
 
 router.use(function(req, res, next) {
-  res.type('application/json');
-  auth.verify(req.header('Auth-Token'), res, next)
+  if (req.path == '/search') {
+    next()
+  } else {
+    res.type('application/json');
+    auth.verify(req.header('Auth-Token'), res, next)
+  }
 })
 
 /**
