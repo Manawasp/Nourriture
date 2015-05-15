@@ -22,7 +22,7 @@ var Part = {
 
 var Mark_by = {
   user: String,
-  value: Number 
+  value: Number
 }
 
 var Recipe = new Schema({
@@ -32,10 +32,10 @@ var Recipe = new Schema({
     people      : Number,
     image       : String,
     mark        : Number,
-    time_total  : [Number],
-    time_prep   : [Number],
+    hours       : Number,
+    minutes     : Number,
     steps       : [String],
-    parts       : [String],
+    parts       : String,
     pictures    : [Media],
     comments    : [String],
     likes       : [String],
@@ -80,43 +80,29 @@ Recipe.methods.create = function(params, user_id) {
 
     /* INIT OBJ TABLE */
 
-    this.parts      = ["", ""]
-    this.time_total = [0, 0]
-    this.time_prep  = [0, 0]
+    this.parts      = ""
+    this.hours      = 0
+    this.minutes    = 0
 
     /* RECIPE PARTS (currently 1 limited) */
 
     if (params.parts) {
-      if (params.parts.title) {
-        this.parts[0] = params.parts.title
-      }
-      if (params.parts.description) {
-        this.parts[1] = params.parts.description
-      }
+      this.parts = params.parts
     }
 
     /* RECIPE DURATION : TOTAL */
 
-    if (params.time_total) {
-      if (params.time_total.m) {
-        this.time_total[1] = params.time_total.m
+    if (params.time_total != undefined) {
+      if (params.time_total.m != undefined) {
+        this.minutes = params.time_total.m
       }
-      if (params.time_total.h) {
-        this.time_total[0]  = params.time_total.h
+      if (params.time_total.h != undefined) {
+        this.hours  = params.time_total.h
       }
     }
 
     /* RECIPE DURATION : PREPARATION */
 
-    if (params.time_prep) {
-      if (params.time_prep.m) {
-        this.time_prep[1] = params.time_prep.m
-      }
-      if (params.time_prep.h) {
-        this.time_prep[0]  = params.time_prep.h
-      }
-    }
-    
     return null
   }
 }
@@ -140,34 +126,20 @@ Recipe.methods.update = function(params) {
     this.labels       = params.labels       || this.labels
     this.blacklist    = params.blacklist    || this.blacklist
     this.updated_at   = new Date
-    
-    if (params.time_prep) {
-      if (params.time_prep.m) {
-        this.time_prep[1] = params.time_prep.m
-      }
-      if (params.time_prep.h) {
-        this.time_prep[0]  = params.time_prep.h
-      }
-    }
 
-    if (params.time_total) {
-      if (params.time_total.m) {
-        this.time_total[1] = params.time_total.m
+    if (params.time_total != undefined) {
+      if (params.time_total.m != undefined) {
+        this.minutes = params.time_total.m
       }
-      if (params.time_total.h) {
-        this.time_total[0]  = params.time_total.h
+      if (params.time_total.h != undefined) {
+        this.hours  = params.time_total.h
       }
     }
 
     if (params.parts) {
-      if (params.parts.title) {
-        this.parts[0] = params.parts.title
-      }
-      if (params.parts.description) {
-        this.parts[1] = params.parts.description
-      }
+      this.parts = params.parts
     }
-   
+
     return null
   }
 }
@@ -231,9 +203,9 @@ Recipe.methods.information = function() {
           comments_length:     this.comments.length,
           people:       this.people,
           steps:        this.steps,
-          parts:        [{title: this.parts[0], description: this.parts[1]}],
-          time_total:   {h: this.time_total[0], m: this.time_total[1]},
-          time_prep:    {h: this.time_prep[0], m: this.time_prep[1]},
+          parts:        this.parts,
+          hours:        this.hours,
+          minutes:      this.minutes,
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }

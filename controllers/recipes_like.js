@@ -8,7 +8,8 @@ var express   = require('express')
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
   , Recipe    = mongoose.model('Recipe')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -29,15 +30,21 @@ router.post('/:rid', function(req, res){
     if (recipe) {
       error = recipe.like(auth.user_id())
       if (error) {
-        res.send(400, {error: error})
+        rData = {error: error}
+        log.writeLog(req, "recipesLike", 400, rData)
+        res.send(400, rData)
       }
       else {
         recipe.save()
-        res.send(200, {success: 'you like the recipe'})
+        rData = {success: 'you like the recipe'}
+        log.writeLog(req, "recipesLike", 200, rData)
+        res.send(200, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesLike", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -52,15 +59,21 @@ router.delete('/:rid', function(req, res){
     if (recipe) {
       error = recipe.unlike(auth.user_id())
       if (error) {
-        res.send(400, {error: error})
+        rData = {error: error}
+        log.writeLog(req, "recipesLike", 400, rData)
+        res.send(400, rData)
       }
       else {
         recipe.save()
-        res.send(200, {success: 'you unlike the recipe'})
+        rData = {success: 'you unlike the recipe'}
+        log.writeLog(req, "recipesLike", 200, rData)
+        res.send(200, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "recipesLike", 404, rData)
+      res.send(404, rData)
     }
   });
 })

@@ -11,7 +11,8 @@ var express     = require('express')
   , Recipe      = mongoose.model('Recipe')
   , Ingredient  = mongoose.model('Ingredient')
   , Comment     = mongoose.model('Comment')
-  , auth        = require('./services/authentification');
+  , auth        = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -44,7 +45,9 @@ router.post('/search', function(req, res){
     var data_moment = []
     data_recipes = []
     if (err) {
-      res.send(500, {error: "moment: f(router.post'/search')"})
+      rData = {error: "moment: f(router.post'/search')"}
+      log.writeLog(req, "moments", 500, rData)
+      res.send(500, rData)
     }
     else if (moments) {
       for (var i = 0; i < moments.length; i++) {
@@ -60,7 +63,9 @@ router.post('/search', function(req, res){
       }
     }
     if (data_recipes.length == 0) {
-      res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+      rData = {moments: data_moment, limit: limit, offset: offset, size: data_moment.length}
+      log.writeLog(req, "moments", 200, rData)
+      res.send(200, rData)
     }
     else {
       Recipe.find({'_id': {$in: data_recipes}}, '', function(err, recipes) {
@@ -75,7 +80,9 @@ router.post('/search', function(req, res){
             }
           }
         }
-        res.send(200, {moments: data_moment, limit: limit, offset: offset, size: data_moment.length})
+        rData = {moments: data_moment, limit: limit, offset: offset, size: data_moment.length}
+        log.writeLog(req, "moments", 200, rData)
+        res.send(200, rData)
       });
     }
   });
@@ -90,10 +97,12 @@ router.post('/', function(req, res){
   moment = new Moment;
   error = moment.create(req.body, auth.user_id())
   if (error) {
-    res.send(400, {error: error})
+    rData = {error: error}
+    log.writeLog(req, "moments", 400, rData)
+    res.send(400, rData)
   }
   else {
-    valid_create_moment(moment, res)
+    valid_create_moment(moment, req, res)
   }
 })
 
@@ -105,10 +114,12 @@ router.get('/:mid', function(req, res){
   res.type('application/json');
   Moment.findOne({'_id': req.params.mid}, '', function(err, moment) {
     if (moment) {
-      show_moment(moment, res)
+      show_moment(moment, req, res)
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "moments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -124,18 +135,24 @@ router.patch('/:mid', function(req, res){
       if (auth.user_id() == moment.created_by) {
         error = moment.update(req.body)
         if (error) {
-          res.send(400, {error: error})
+          rData = {error: error}
+          log.writeLog(req, "moments", 400, rData)
+          res.send(400, rData)
         }
         else {
-          valid_create_moment(moment, res)
+          valid_create_moment(moment, req, res)
         }
       }
       else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "moments", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "moments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -151,14 +168,20 @@ router.delete('/:mid', function(req, res){
       if (auth.user_id() == moment.created_by) {
         // Comment.find({'_id': moment.comments}).remove()
         moment.remove()
-        res.send(200, {success: 'moment removed'})
+        rData = {success: 'moment removed'}
+        log.writeLog(req, "moments", 200, rData)
+        res.send(200, rData)
       }
       else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "moments", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "moments", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -173,12 +196,12 @@ module.exports = router
  * Private method
  */
 
-var valid_create_moment = function(moment, res) {
+var valid_create_moment = function(moment, req, res) {
   moment.save()
-  show_moment(moment, res)
+  show_moment(moment, req, res)
 }
 
-var show_moment = function(moment, res) {
+var show_moment = function(moment, req, res) {
   data_moment = moment.information()
   User.findOne({'_id': moment.created_by}, '', function(err, user) {
     create_by = {}
@@ -199,10 +222,12 @@ var show_moment = function(moment, res) {
             users_data.push(users[i].information())
           }
         }
-        res.send(200, {created_by: create_by,
-                      ingredients: data_ingredient,
-                      users: users_data,
-                      moment: data_moment})
+        rData = {created_by: create_by,
+                  ingredients: data_ingredient,
+                  users: users_data,
+                  moment: data_moment}
+        log.writeLog(req, "moments", 200, rData)
+        res.send(200, rData)
       });
     });
   });

@@ -10,7 +10,8 @@ var express   = require('express')
   , User      = mongoose.model('User')
   , Redis     = require("ioredis")
   , redisClient = new Redis()
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
   redisClient.setMaxListeners(0);
 
 /**
@@ -47,14 +48,18 @@ router.post('/search', function(req, res){
   query.exec(function (err, users) {
     data_user = []
     if (err) {
-      res.send(500, {error: "user: f(router.post'/search')"})
+      rData = {error: "search fail"}
+      log.writeLog(req, "user", 500, rData)
+      res.send(500, rData)
     }
     else if (users) {
       for (var i = 0; i < users.length; i++) {
         data_user.push(users[i].information())
       }
     }
-    res.send(200, {users: data_user, limit: limit, offset: offset, size: data_user.length})
+    rData = {users: data_user, limit: limit, offset: offset, size: data_user.length}
+    log.writeLog(req, "user", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -67,7 +72,9 @@ router.post('/', function(req, res){
   user = new User;
   error = user.create_by_email(req.body)
   if (error) {
-    res.send(400, {error: error});
+    rData = {error: error}
+    log.writeLog(req, "user", 400, rData)
+    res.send(400, rData);
   }
   else {
     uniqueness_email(user, req, res, valide_create)
@@ -83,14 +90,20 @@ router.get('/:uid', function(req, res){
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
       if (u._id == auth.user_id()) {
-        res.send(200, u.personal_information())
+        rData = u.personal_information()
+        log.writeLog(req, "user", 200, rData)
+        res.send(200, rData)
       }
       else {
-        res.send(200, u.information())
+        rData = u.information()
+        log.writeLog(req, "user", 200, rData)
+        res.send(200, rData)
       }
     }
     else {
-      res.send(404, {error: "resource not found"})
+      rData = {error: "resource not found"}
+      log.writeLog(req, "user", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -106,7 +119,9 @@ router.patch('/:uid', function(req, res){
       if (u._id == auth.user_id())
       {
         if (!Object.keys(req.body).length) {
-          res.send(400, {error: "empty request"})
+          rData = {error: "empty request"}
+          log.writeLog(req, "user", 400, rData)
+          res.send(400, rData)
         }
         else {
           error = u.update_information(req.body)
@@ -117,16 +132,22 @@ router.patch('/:uid', function(req, res){
             valide_create(u, req, res)
           }
           else {
-            res.send(400, {error: error})
+            rData = {error: error}
+            log.writeLog(req, "user", 400, rData)
+            res.send(400, rData)
           }
         }
       }
       else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "user", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: "resource not found"})
+      rData = {error: "resource not found"}
+      log.writeLog(req, "user", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -141,14 +162,20 @@ router.delete('/:uid', function(req, res){
     if (u) {
       if (u._id == auth.user_id())
       {
-        res.send(202, {success: "non implemente"})
+        rData = {success: "non implemente"}
+        log.writeLog(req, "user", 202, rData)
+        res.send(202, rData)
       }
       else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "user", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: "resource not found"})
+      rData = {error: "resource not found"}
+      log.writeLog(req, "user", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -165,20 +192,27 @@ router.post('/:uid/pictures', function(req, res) {
       if (u._id == auth.user_id())
       {
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined){
-          fs.writeFile(__dirname + '/../public/pictures/avatars/' + u._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
-          u.avatar = "http://localhost:8080/pictures/avatars/" + u._id + "." +  req.body.extend
+          fileName = u._id + (Math.floor((Math.random() * 10000) + 1)).toString() + "." +  req.body.extend
+          fs.writeFile(__dirname + '/../public/pictures/avatars/' + fileName, new Buffer(req.body.picture, "base64"), function(err) {});
+          u.avatar = "http://localhost:8080/pictures/avatars/"+ fileName
           valide_create(u, req, res)
         }
         else {
-          res.send(400, {error: "bad type, only png and jpg are supported"})
+          rData = {error: "bad type, only png and jpg are supported"}
+          log.writeLog(req, "user", 400, rData)
+          res.send(400, rData)
         }
       }
       else {
-        res.send(403, {error: "you don't have the permission"})
+        rData = {error: "you don't have the permission"}
+        log.writeLog(req, "user", 403, rData)
+        res.send(403, rData)
       }
     }
     else {
-      res.send(404, {error: "resource not found"})
+      rData = {error: "resource not found"}
+      log.writeLog(req, "user", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -197,7 +231,9 @@ module.exports = router
 var uniqueness_email = function(user, req, res, callback) {
   User.findOne({'email': user.email}, '', function (err, user_data) {
     if (user_data) {
-      res.send(400, {error: "this email is already taken"})
+      rData = {error: "this email is already taken"}
+      log.writeLog(req, "user", 400, rData)
+      res.send(400, rData)
     }
     else {
       callback(user, req, res)
@@ -213,5 +249,7 @@ var valide_create = function(user, req, res) {
       // redisClient.quit();
     });
   }
-  res.send(200, {token: user.auth_token(), user: user.personal_information()})
+  rData = {token: user.auth_token(), user: user.personal_information()}
+  log.writeLog(req, "user", 200, rData)
+  res.send(200, rData)
 }

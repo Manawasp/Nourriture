@@ -9,15 +9,20 @@ var express   = require('express')
   , fs        = require('fs')
   , User      = mongoose.model('User')
   , Ingredient= mongoose.model('Ingredient')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
  */
 
 router.use(function(req, res, next) {
-  res.type('application/json');
-  auth.verify(req.header('Auth-Token'), res, next)
+  if (req.path == '/search') {
+    next()
+  } else {
+    res.type('application/json');
+    auth.verify(req.header('Auth-Token'), res, next)
+  }
 })
 
 /**
@@ -47,14 +52,18 @@ router.post('/search', function(req, res){
   query.exec(function (err, ingredients) {
     data_ingredient = []
     if (err) {
-      res.send(500, {error: "f(router.post'/search')"})
+      rData = {error: "f(router.post'/search')"}
+      log.writeLog(req, "ingredients", 500, rData)
+      res.send(500, rData)
     }
     else if (ingredients) {
       for (var i = 0; i < ingredients.length; i++) {
         data_ingredient.push(ingredients[i].information())
       }
     }
-    res.send(200, {ingredients: data_ingredient, limit: limit, offset: offset, size: data_ingredient.length})
+    rData = {ingredients: data_ingredient, limit: limit, offset: offset, size: data_ingredient.length}
+    log.writeLog(req, "ingredients", 200, rData)
+    res.send(200, rData)
   });
 })
 
@@ -68,14 +77,18 @@ router.post('/', function(req, res){
     ingredient = new Ingredient;
     error = ingredient.create(req.body, auth.user_id())
     if (error) {
-      res.send(400, {error: error})
+      rData = {error: error}
+      log.writeLog(req, "ingredients", 400, rData)
+      res.send(400, rData)
     }
     else {
-      uniqueness_ingredient(ingredient, res, valid_create_ingredient)
+      uniqueness_ingredient(ingredient, req, res, valid_create_ingredient)
     }
   }
   else {
-    res.send(403, {error: "you don't have the permission"});
+    rData = {error: "you don't have the permission"}
+    log.writeLog(req, "ingredients", 403, rData)
+    res.send(403, rData);
   }
 })
 
@@ -86,10 +99,14 @@ router.post('/', function(req, res){
 router.get('/:uid', function(req, res){
   Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
     if (ingredient) {
-      res.send(200, ingredient.information())
+      rData = ingredient.information()
+      log.writeLog(req, "ingredients", 200, rData)
+      res.send(200, rData)
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "ingredients", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -105,19 +122,25 @@ router.patch('/:uid', function(req, res){
       if (ingredient) {
         error = ingredient.update(req.body)
         if (error) {
-          res.send(400, {error: error})
+          rData = {error: error}
+          log.writeLog(req, "ingredients", 400, rData)
+          res.send(400, rData)
         }
         else {
-          valid_create_ingredient(ingredient, res)
+          valid_create_ingredient(ingredient, req, res)
         }
       }
       else {
-        res.send(404, {error: 'resource not found'})
+        rData = {error: 'resource not found'}
+        log.writeLog(req, "ingredients", 404, rData)
+        res.send(404, rData)
       }
     });
   }
   else {
-    res.send(403, {error: "you don't have the permission"});
+    rData = {error: "you don't have the permission"}
+    log.writeLog(req, "ingredients", 403, rData)
+    res.send(403, rData);
   }
 })
 
@@ -131,15 +154,21 @@ router.delete('/:uid', function(req, res){
     Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
       if (ingredient) {
         ingredient.remove()
-        res.send(200, {success: 'ingredient removed'})
+        rData = {success: 'ingredient removed'}
+        log.writeLog(req, "ingredients", 200, rData)
+        res.send(200, rData)
       }
       else {
-        res.send(404, {error: 'resource not found'})
+        rData = {error: 'resource not found'}
+        log.writeLog(req, "ingredients", 404, rData)
+        res.send(404, rData)
       }
     });
   }
   else {
-    res.send(403, {error: "you don't have the permission"});
+    rData = {error: "you don't have the permission"}
+    log.writeLog(req, "ingredients", 403, rData)
+    res.send(403, rData);
   }
 })
 
@@ -153,20 +182,27 @@ router.post('/:uid/pictures', function(req, res){
     Ingredient.findOne({'_id': req.params.uid}, '', function(err, ingredient) {
       if (ingredient) {
         if (req.body.extend == "jpg" || req.body.extend == "png" && req.body.picture != undefined) {
-          fs.writeFile(__dirname + '/../public/pictures/ingredients/' + ingredient._id + "." +  req.body.extend, new Buffer(req.body.picture, "base64"), function(err) {});
-            ingredient.icon = "http://localhost:8080/pictures/ingredients/" + ingredient._id + "." +  req.body.extend
-          valid_create_ingredient(ingredient, res)
+          fileName = ingredient._id + (Math.floor((Math.random() * 10000) + 1)).toString() + "." +  req.body.extend
+          fs.writeFile(__dirname + '/../public/pictures/ingredients/' + fileName, new Buffer(req.body.picture, "base64"), function(err) {});
+            ingredient.icon = "http://localhost:8080/pictures/ingredients/" + fileName
+          valid_create_ingredient(ingredient, req, res)
         } else {
-          res.send(400, {error: "bad type, only png and jpg are supported"})
+          rData = {error: "bad type, only png and jpg are supported"}
+          log.writeLog(req, "ingredients", 400, rData)
+          res.send(400, rData)
         }
       }
       else {
-        res.send(404, {error: 'resource not found'})
+        rData = {error: 'resource not found'}
+        log.writeLog(req, "ingredients", 400, rData)
+        res.send(400, rData)
       }
     });
   }
   else {
-    res.send(403, {error: "you don't have the permission"});
+    rData = {error: "you don't have the permission"}
+    log.writeLog(req, "ingredients", 403, rData)
+    res.send(403, rData);
   }
 })
 
@@ -180,18 +216,22 @@ module.exports = router
  * Private method
  */
 
- var uniqueness_ingredient = function(ingredient, res, callback) {
+ var uniqueness_ingredient = function(ingredient, req, res, callback) {
   Ingredient.findOne({'name': ingredient.name}, '', function(err, ingredient_data) {
     if (ingredient_data) {
-      res.send(400, {error: 'this ingredient already exist'})
+      rData = {error: 'this ingredient already exist'}
+      log.writeLog(req, "ingredients", 400, rData)
+      res.send(400, rData)
     }
     else {
-      callback(ingredient, res)
+      callback(ingredient, req, res)
     }
   });
  }
 
-var valid_create_ingredient = function(ingredient, res) {
+var valid_create_ingredient = function(ingredient, req, res) {
   ingredient.save()
-  res.send(200, ingredient.information())
+  rData = ingredient.information()
+  log.writeLog(req, "ingredients", 200, rData)
+  res.send(200, rData)
 }

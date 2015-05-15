@@ -7,7 +7,8 @@ var express   = require('express')
   , router    = express.Router()
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -33,10 +34,14 @@ router.get('/:uid', function(req, res){
             followeds_data.push(users[i].information())
           }
         }
+        log.writeLog(req, "followeds", 200, followeds_data)
         res.send(200, followeds_data)
       });
     }
-    else {res.send(404, {error: "resource not found"})}
+    else {
+      rData = {error: "resource not found"}
+      log.writeLog(req, "followeds", 404, rData)
+      res.send(404, rData)}
   });
 })
 

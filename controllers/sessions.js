@@ -9,7 +9,8 @@ var express   = require('express')
   , User      = mongoose.model('User')
   , Redis     = require("ioredis")
   , redisClient = new Redis()
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
   redisClient.setMaxListeners(0);
 
 /**
@@ -42,15 +43,27 @@ router.post('/', function(req, res){
             console.log("Error " + err);
           });
           redisClient.lpush(["user:"+user_cible._id+":token", user_cible.salt], function(err, result){
-            res.send(200, {token: user_cible.auth_token(), user: user_cible.personal_information()})
+            rData = {token: user_cible.auth_token(),
+                      user: user_cible.personal_information()}
+            log.writeLog(req, "sessions", 200, rData)
+            res.send(200, rData)
           });
         }
-        else {res.send(400, {error: "match email/password failed"})}
+        else {
+          rData = {error: "match email/password failed"}
+          log.writeLog(req, "sessions", 200, rData)
+          res.send(400, rData)}
       }
-      else {res.send(404, {error: "resource not found"})}
+      else {
+        rData = {error: "resource not found"}
+        log.writeLog(req, "sessions", 200, rData)
+        res.send(404, rData)}
     });
   }
-  else {res.send(400, {error: "bad request"})}
+  else {
+    rData = {error: "bad request"}
+    log.writeLog(req, "sessions", 200, rData)
+    res.send(400, rData)}
 })
 
 /**
@@ -61,7 +74,9 @@ router.delete('/', function(req, res){
   res.type('application/json');
   redisClient.lrem("user:" + auth.user_id() + ":token", 0, auth.user_hash(), function() {
   });
-  res.send(200, {success: "session deleted"});
+  rData = {success: "session deleted"}
+  log.writeLog(req, "sessions", 200, rData)
+  res.send(200, rData);
 })
 
 /**

@@ -8,7 +8,8 @@ var express   = require('express')
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
   , Moment    = mongoose.model('Moment')
-  , auth      = require('./services/authentification');
+  , auth      = require('./services/authentification')
+  , log         = require('./services/log');
 
 /**
  * Router middleware
@@ -29,15 +30,21 @@ router.post('/:mid', function(req, res){
     if (moment) {
       error = moment.like(auth.user_id())
       if (error) {
-        res.send(400, {error: error})
+        rData = {error: error}
+        log.writeLog(req, "momentsLike", 400, rData)
+        res.send(400, rData)
       }
       else {
         moment.save()
-        res.send(200, {success: 'you like the moment'})
+        rData = {success: 'you like the moment'}
+        log.writeLog(req, "momentsLike", 200, rData)
+        res.send(200, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "momentsLike", 404, rData)
+      res.send(404, rData)
     }
   });
 })
@@ -52,15 +59,21 @@ router.delete('/:mid', function(req, res){
     if (moment) {
       error = moment.unlike(auth.user_id())
       if (error) {
-        res.send(400, {error: error})
+        rData = {error: error}
+        log.writeLog(req, "momentsLike", 404, rData)
+        res.send(400, rData)
       }
       else {
         moment.save()
-        res.send(200, {success: 'you unlike the moment'})
+        rData = {success: 'you unlike the moment'}
+        log.writeLog(req, "momentsLike", 200, rData)
+        res.send(200, rData)
       }
     }
     else {
-      res.send(404, {error: 'resource not found'})
+      rData = {error: 'resource not found'}
+      log.writeLog(req, "momentsLike", 404, rData)
+      res.send(404, rData)
     }
   });
 })

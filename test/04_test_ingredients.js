@@ -491,7 +491,6 @@ describe('Ingredients Controller', function(){
       .send('{}')
       .end(function(res)
       {
-        console.log(res.body)
         expect(res).to.exist;
         expect(res.status).to.equal(403);
         expect(res.body.error).to.equal("you don't have the permission");
