@@ -32,8 +32,8 @@ var Recipe = new Schema({
     people      : Number,
     image       : String,
     mark        : Number,
-    time_total  : [Number],
-    time_prep   : [Number],
+    hours       : Number,
+    minutes     : Number,
     steps       : [String],
     parts       : String,
     pictures    : [Media],
@@ -81,8 +81,8 @@ Recipe.methods.create = function(params, user_id) {
     /* INIT OBJ TABLE */
 
     this.parts      = ""
-    this.time_total = [0, 0]
-    this.time_prep  = [0, 0]
+    this.hours      = 0
+    this.minutes    = 0
 
     /* RECIPE PARTS (currently 1 limited) */
 
@@ -92,25 +92,16 @@ Recipe.methods.create = function(params, user_id) {
 
     /* RECIPE DURATION : TOTAL */
 
-    if (params.time_total) {
-      if (params.time_total.m) {
-        this.time_total[1] = params.time_total.m
+    if (params.time_total != undefined) {
+      if (params.time_total.m != undefined) {
+        this.minutes = params.time_total.m
       }
-      if (params.time_total.h) {
-        this.time_total[0]  = params.time_total.h
+      if (params.time_total.h != undefined) {
+        this.hours  = params.time_total.h
       }
     }
 
     /* RECIPE DURATION : PREPARATION */
-
-    if (params.time_prep) {
-      if (params.time_prep.m) {
-        this.time_prep[1] = params.time_prep.m
-      }
-      if (params.time_prep.h) {
-        this.time_prep[0]  = params.time_prep.h
-      }
-    }
 
     return null
   }
@@ -136,21 +127,12 @@ Recipe.methods.update = function(params) {
     this.blacklist    = params.blacklist    || this.blacklist
     this.updated_at   = new Date
 
-    if (params.time_prep) {
-      if (params.time_prep.m) {
-        this.time_prep[1] = params.time_prep.m
+    if (params.time_total != undefined) {
+      if (params.time_total.m != undefined) {
+        this.minutes = params.time_total.m
       }
-      if (params.time_prep.h) {
-        this.time_prep[0]  = params.time_prep.h
-      }
-    }
-
-    if (params.time_total) {
-      if (params.time_total.m) {
-        this.time_total[1] = params.time_total.m
-      }
-      if (params.time_total.h) {
-        this.time_total[0]  = params.time_total.h
+      if (params.time_total.h != undefined) {
+        this.hours  = params.time_total.h
       }
     }
 
@@ -222,8 +204,8 @@ Recipe.methods.information = function() {
           people:       this.people,
           steps:        this.steps,
           parts:        this.parts,
-          time_total:   {h: this.time_total[0], m: this.time_total[1]},
-          time_prep:    {h: this.time_prep[0], m: this.time_prep[1]},
+          hours:        this.hours,
+          minutes:      this.minutes,
           created_at:   this.created_at,
           updated_at:   this.updated_at}
 }
