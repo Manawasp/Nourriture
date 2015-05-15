@@ -83,10 +83,10 @@ describe('Ingredients Controller', function(){
       });
     }
     it ("200: ingredient is uniq", function(done){
-      createIngredient("apricot", "apricot.jpg", "jpg", done)
+      createIngredient("apricot", "Apricot.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("artemisia absinthium", "artemisia_absinthium.jpg", "jpg", done)
+      createIngredient("artemisia absinthium", "Artemisia_absinthium.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
 	createIngredient("baking powder", "Baking_powder.jpg", "jpg", done)
@@ -125,7 +125,7 @@ describe('Ingredients Controller', function(){
       createIngredient("chili", "Chili.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
-      createIngredient("cilandro", "Cilandro.jpg", "jpg", done)
+      createIngredient("cilantro", "Cilantro.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("curry", "Curry.jpg", "jpg", done)
@@ -134,7 +134,7 @@ describe('Ingredients Controller', function(){
       createIngredient("eggs", "Eggs.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("elattaria cardamomum", "elattaria_cardamonum.jpg", "jpg", done)
+      createIngredient("elattaria cardamomum", "Elattaria_cardamomum.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("feta greece", "Feta_greece.jpg", "jpg", done)
@@ -182,7 +182,7 @@ describe('Ingredients Controller', function(){
       createIngredient("rice", "Rice.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
-      createIngredient("salmon fillet", "Salmon_fillet.jpg", "jpg", done)
+      createIngredient("salmon fillet", "Salmon_fillets.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("salt", "Salt.jpg", "jpg", done)
@@ -233,7 +233,7 @@ describe('Ingredients Controller', function(){
       createIngredient("berry", "Berry.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("radishes", "Radishes.jpg", "jpg", done)
+      createIngredient("radish", "Radish.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
       createIngredient("turnip", "Turnip.jpg", "jpg", done)
@@ -275,7 +275,7 @@ describe('Ingredients Controller', function(){
       createIngredient("quince", "Quince.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("apple", "Appe.jpg", "jpg", done)
+      createIngredient("apple", "Apple.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
       createIngredient("pear", "Pear.jpg", "jpg", done)
