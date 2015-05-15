@@ -51,25 +51,35 @@ describe('Ingredients Controller', function(){
       .end(function(res)
       {
         expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        ingredients[1].id = res.body.id
-        // ouvre le fichier
-        fs.readFile(__dirname + '/images/ingredients/' + url, function(err, original_data){
-          base64Image = new Buffer(original_data, 'binary').toString('base64');
-          // Lqncereauete pour enregister l'image
-          request
-          .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
-          .set('Content-Type', 'application/json')
-          .set('Auth-Token', users[1].token)
-          .send('{"extend":"'+typeImg+'","picture":"'+base64Image+'"}')
-          .end(function(res)
-          {
-            expect(res).to.exist;
-            expect(res.status).to.equal(200);
-            expect(res.body.icon).to.equal("http://localhost:8080/pictures/ingredients/" + ingredients[1].id +".jpg");
-            done()
+        if (res.status == 400) {
+          done(new Error('Ingredient already exist : ' + name));
+        }
+        else {
+          expect(res.status).to.equal(200);
+          ingredients[1].id = res.body.id
+          // ouvre le fichier
+          fs.readFile(__dirname + '/images/ingredients/' + url, function(err, original_data){
+            if (err) {
+              done(new Error('image not found : '+ __dirname + '/images/ingredients/' + url));
+            } else {
+              base64Image = new Buffer(original_data, 'binary').toString('base64');
+              // Lqncereauete pour enregister l'image
+              request
+              .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+              .set('Content-Type', 'application/json')
+              .set('Auth-Token', users[1].token)
+              .send('{"extend":"'+typeImg+'","picture":"'+base64Image+'"}')
+              .end(function(res)
+              {
+                expect(res).to.exist;
+                expect(res.status).to.equal(200);
+                expect(res.body.icon).to.match(/^http:\/\/localhost:8080\/pictures\/ingredients\/(.*).jpg$/);
+                // Line to validate
+                done()
+              });
+            }
           });
-        });
+        }
       });
     }
     it ("200: ingredient is uniq", function(done){
@@ -339,34 +349,5 @@ describe('Ingredients Controller', function(){
     it ("200: ingredient is uniq", function(done){
       createIngredient("parsley", "Parsley.jpg", "jpg", done)
     });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-
   })
-
 })
