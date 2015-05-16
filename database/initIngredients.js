@@ -51,32 +51,42 @@ describe('Ingredients Controller', function(){
       .end(function(res)
       {
         expect(res).to.exist;
-        expect(res.status).to.equal(200);
-        ingredients[1].id = res.body.id
-        // ouvre le fichier
-        fs.readFile(__dirname + '/images/ingredients/' + url, function(err, original_data){
-          base64Image = new Buffer(original_data, 'binary').toString('base64');
-          // Lqncereauete pour enregister l'image
-          request
-          .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
-          .set('Content-Type', 'application/json')
-          .set('Auth-Token', users[1].token)
-          .send('{"extend":"'+typeImg+'","picture":"'+base64Image+'"}')
-          .end(function(res)
-          {
-            expect(res).to.exist;
-            expect(res.status).to.equal(200);
-            expect(res.body.icon).to.equal("http://localhost:8080/pictures/ingredients/" + ingredients[1].id +".jpg");
-            done()
+        if (res.status == 400) {
+          done(new Error('Ingredient already exist : ' + name));
+        }
+        else {
+          expect(res.status).to.equal(200);
+          ingredients[1].id = res.body.id
+          // ouvre le fichier
+          fs.readFile(__dirname + '/images/ingredients/' + url, function(err, original_data){
+            if (err) {
+              done(new Error('image not found : '+ __dirname + '/images/ingredients/' + url));
+            } else {
+              base64Image = new Buffer(original_data, 'binary').toString('base64');
+              // Lqncereauete pour enregister l'image
+              request
+              .post('localhost:8080/ingredients/' + ingredients[1].id + "/pictures")
+              .set('Content-Type', 'application/json')
+              .set('Auth-Token', users[1].token)
+              .send('{"extend":"'+typeImg+'","picture":"'+base64Image+'"}')
+              .end(function(res)
+              {
+                expect(res).to.exist;
+                expect(res.status).to.equal(200);
+                expect(res.body.icon).to.match(/^http:\/\/localhost:8080\/pictures\/ingredients\/(.*).jpg$/);
+                // Line to validate
+                done()
+              });
+            }
           });
-        });
+        }
       });
     }
     it ("200: ingredient is uniq", function(done){
-      createIngredient("apricot", "apricot.jpg", "jpg", done)
+      createIngredient("apricot", "Apricot.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("artemisia absinthium", "artemisia_absinthium.jpg", "jpg", done)
+      createIngredient("artemisia absinthium", "Artemisia_absinthium.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
 	createIngredient("baking powder", "Baking_powder.jpg", "jpg", done)
@@ -115,7 +125,7 @@ describe('Ingredients Controller', function(){
       createIngredient("chili", "Chili.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
-      createIngredient("cilandro", "Cilandro.jpg", "jpg", done)
+      createIngredient("cilantro", "Cilantro.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("curry", "Curry.jpg", "jpg", done)
@@ -124,7 +134,7 @@ describe('Ingredients Controller', function(){
       createIngredient("eggs", "Eggs.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("elattaria cardamomum", "elattaria_cardamonum.jpg", "jpg", done)
+      createIngredient("elattaria cardamomum", "Elattaria_cardamomum.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("feta greece", "Feta_greece.jpg", "jpg", done)
@@ -172,7 +182,7 @@ describe('Ingredients Controller', function(){
       createIngredient("rice", "Rice.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
-      createIngredient("salmon fillet", "Salmon_fillet.jpg", "jpg", done)
+      createIngredient("salmon fillet", "Salmon_fillets.jpg", "jpg", done)
     });
 	it ("200: ingredient is uniq", function(done){
       createIngredient("salt", "Salt.jpg", "jpg", done)
@@ -223,7 +233,7 @@ describe('Ingredients Controller', function(){
       createIngredient("berry", "Berry.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("radishes", "Radishes.jpg", "jpg", done)
+      createIngredient("radish", "Radish.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
       createIngredient("turnip", "Turnip.jpg", "jpg", done)
@@ -265,7 +275,7 @@ describe('Ingredients Controller', function(){
       createIngredient("quince", "Quince.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
-      createIngredient("apple", "Appe.jpg", "jpg", done)
+      createIngredient("apple", "Apple.jpg", "jpg", done)
     });
     it ("200: ingredient is uniq", function(done){
       createIngredient("pear", "Pear.jpg", "jpg", done)
@@ -339,34 +349,5 @@ describe('Ingredients Controller', function(){
     it ("200: ingredient is uniq", function(done){
       createIngredient("parsley", "Parsley.jpg", "jpg", done)
     });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-    it ("200: ingredient is uniq", function(done){
-      createIngredient("ricotta", "Ricotta.jpg", "jpg", done)
-    });
-
   })
-
 })

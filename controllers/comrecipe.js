@@ -30,7 +30,6 @@ router.use(function(req, res, next) {
 
 router.get('/latest', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
   Recipe.find().limit(4).exec(function (err, recipes) {
    data_recipes = []
@@ -56,9 +55,14 @@ router.get('/latest', function(req, res){
 
 router.get('/random', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
-  Recipe.findRandom().limit(4).exec(function (err, recipes) {
+  if (params.limit) {
+    limit = params.limit
+  } else {
+    limit = 4
+  }
+  params = req.body
+  Recipe.findRandom().limit(limit).exec(function (err, recipes) {
    data_recipes = []
     if (err) {
       rData = {error: "recipes: f(router.get'/random')"}
@@ -70,7 +74,7 @@ router.get('/random', function(req, res){
         data_recipes.push(recipes[i].information())
       }
     }
-    rData = {recipes: data_recipes, limit: 4, offset: 0, size: data_recipes.length}
+    rData = {recipes: data_recipes, limit: limit, offset: 0, size: data_recipes.length}
     log.writeLog(req, "commentRecipe", 200, rData)
     res.send(200, rData)
   });
@@ -82,7 +86,6 @@ router.get('/random', function(req, res){
 
 router.get('/month', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
   Recipe.findRandom().limit(4).exec(function (err, recipes) {
    data_recipes = []
@@ -108,7 +111,6 @@ router.get('/month', function(req, res){
 
 router.get('/week', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
   Recipe.findRandom().limit(1).exec(function (err, recipes) {
    data_recipes = []

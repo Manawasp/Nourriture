@@ -56,8 +56,8 @@ router.post('/search', function(req, res){
   if (typeof params.country == 'string') {
     query.where('country').equals(params.country);
   }
-  if (typeof params.create_by == 'string') {
-    query.where('create_by').equals(params.create_by);
+  if (typeof params.created_by == 'string') {
+    query.where('created_by').equals(params.create_by);
   }
   query.skip(offset).limit(limit)
   query.exec(function (err, recipes) {
