@@ -169,7 +169,7 @@ Recipe.methods.remove_comment = function(comment_id) {
 
 Recipe.methods.like = function(user_id) {
   if (this.likes.indexOf(user_id) != -1) {
-    return "you already like this recipe"
+    return "you already favourites this recipe"
   } else {
     this.likes.push(user_id)
     return null
@@ -179,7 +179,7 @@ Recipe.methods.like = function(user_id) {
 Recipe.methods.unlike = function(user_id) {
   index_tab = this.likes.indexOf(user_id)
   if (index_tab == -1) {
-    return "you don't like this recipe"
+    return "you don't favourites this recipe"
   } else {
     this.likes.splice(index_tab, 1)
     return null

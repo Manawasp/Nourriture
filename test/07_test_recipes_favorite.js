@@ -1,7 +1,7 @@
 var request = require('superagent'),
   expect = require('expect.js');
 
-describe('RecipesLikes Controller', function(){
+describe('RecipesFavorites Controller', function(){
   var users = [{"id": 0, "token": ""},
                {"id": 0, "token": ""},
                {"id": 0, "token": ""}]
@@ -57,11 +57,11 @@ describe('RecipesLikes Controller', function(){
     });
   });
 
-  describe('CREATE RecipesLikes', function(){
+  describe('CREATE RecipesFavourites', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .post('localhost:8080/like/recipes/' + recipe_id)
+      .post('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -75,7 +75,7 @@ describe('RecipesLikes Controller', function(){
 
     it ("404: resource not found", function(done){
      request
-      .post('localhost:8080/like/recipes/dowkpodwkpokwd')
+      .post('localhost:8080/favourites/recipes/dowkpodwkpokwd')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -88,9 +88,9 @@ describe('RecipesLikes Controller', function(){
       });
     });
 
-    it ("200: like with success", function(done){
+    it ("200: favourites with success", function(done){
      request
-      .post('localhost:8080/like/recipes/' + recipe_id)
+      .post('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -98,14 +98,14 @@ describe('RecipesLikes Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.success).to.equal("you like the recipe");
+        expect(res.body.success).to.equal("you favourites the recipe");
         done()
       });
     });
 
-    it ("400: already like", function(done){
+    it ("400: already favourites", function(done){
      request
-      .post('localhost:8080/like/recipes/' + recipe_id)
+      .post('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -113,18 +113,52 @@ describe('RecipesLikes Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(400);
-        expect(res.body.error).to.equal("you already like this recipe");
+        expect(res.body.error).to.equal("you already favourites this recipe");
         done()
       });
     });
 
   });
 
-  describe('DELETE RecipesLikes', function(){
+  describe('SEARCH Recipesfavourites', function(){
+    it ("200: search without limit", function(done){
+     request
+      .post('localhost:8080/favourites/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.size).to.equal(1);
+        expect(res.body.offset).to.equal(0);
+        done()
+      });
+    });
+
+    it ("200: search without limit", function(done){
+     request
+      .post('localhost:8080/favourites/search')
+      .set('Content-Type', 'application/json')
+      .set('Auth-Token', users[1].token)
+      .send('{"offset":2}')
+      .end(function(res)
+      {
+        expect(res).to.exist;
+        expect(res.status).to.equal(200);
+        expect(res.body.size).to.equal(0);
+        expect(res.body.offset).to.equal(2);
+        done()
+      });
+    });
+  });
+
+  describe('DELETE Recipesfavourites', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .del('localhost:8080/like/recipes/' + recipe_id)
+      .del('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -138,7 +172,7 @@ describe('RecipesLikes Controller', function(){
 
     it ("404: resource not found", function(done){
      request
-      .del('localhost:8080/like/recipes/dowkpodwkpokwd')
+      .del('localhost:8080/favourites/recipes/dowkpodwkpokwd')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -151,9 +185,9 @@ describe('RecipesLikes Controller', function(){
       });
     });
 
-    it ("200: unlike with success", function(done){
+    it ("200: unfavourites with success", function(done){
      request
-      .del('localhost:8080/like/recipes/' + recipe_id)
+      .del('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -161,14 +195,14 @@ describe('RecipesLikes Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.success).to.equal("you unlike the recipe");
+        expect(res.body.success).to.equal("you unfavourites the recipe");
         done()
       });
     });
 
-    it ("400: already like", function(done){
+    it ("400: already favourites", function(done){
      request
-      .del('localhost:8080/like/recipes/' + recipe_id)
+      .del('localhost:8080/favourites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -176,11 +210,28 @@ describe('RecipesLikes Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(400);
-        expect(res.body.error).to.equal("you don't like this recipe");
+        expect(res.body.error).to.equal("you don't favourites this recipe");
         done()
       });
     });
 
   });
 
+    describe('SEARCH Recipesfavourites', function(){
+      it ("200: search without limit", function(done){
+       request
+        .post('localhost:8080/favourites/search')
+        .set('Content-Type', 'application/json')
+        .set('Auth-Token', users[1].token)
+        .send('{}')
+        .end(function(res)
+        {
+          expect(res).to.exist;
+          expect(res.status).to.equal(200);
+          expect(res.body.size).to.equal(0);
+          expect(res.body.offset).to.equal(0);
+          done()
+        });
+      });
+    });
 });

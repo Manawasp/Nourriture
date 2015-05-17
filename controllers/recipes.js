@@ -29,7 +29,6 @@ router.use(function(req, res, next) {
 
 router.post('/search', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
   if (params.title) {
     var re = new RegExp(params.title, 'i');

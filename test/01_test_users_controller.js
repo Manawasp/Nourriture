@@ -637,7 +637,7 @@ describe('User Controller', function(){
         expect(res).to.exist;
         expect(res.status).to.equal(200);
         expect(res.body.user.id).to.equal(users[0].id);
-        expect(res.body.user.avatar).to.equal("http://localhost:8080/pictures/avatars/" +users[0].id +".png");
+        expect(res.body.user.avatar).to.match(/^http:\/\/localhost:8080\/pictures\/avatars\/(.*).png$/);
         done()
       });
     });
