@@ -42,7 +42,7 @@ router.post('/search', function(req, res){
    }
    else if (recipes) {
      for (var i = 0; i < recipes.length; i++) {
-       data_recipes.push(recipes[i].information())
+       data_recipes.push(recipes[i].information(auth.user_id()))
      }
    }
    rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length}

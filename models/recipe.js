@@ -190,7 +190,9 @@ Recipe.methods.unlike = function(user_id) {
  * Get information
  */
 
-Recipe.methods.information = function() {
+Recipe.methods.information = function(user_id) {
+  user_like = false
+  if (user_id != undefined && this.likes.indexOf(user_id) != -1) {user_like = true)
   return {id:           this._id,
           image:        this.image,
           title:        this.title,
@@ -200,6 +202,7 @@ Recipe.methods.information = function() {
           blacklist:    this.blacklist,
           mark:         3.6,
           likes:        this.likes.length,
+          liked:        user_like,
           comments_length:     this.comments.length,
           people:       this.people,
           steps:        this.steps,
