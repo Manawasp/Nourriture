@@ -29,6 +29,7 @@ router.post('/search', function(req, res){
  params = req.body
  offset = 0
  limit = 11
+ query = Recipe.find({})
  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
  query.where('likes').in([auth.user_id()])
