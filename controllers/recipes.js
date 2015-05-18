@@ -60,20 +60,28 @@ router.post('/search', function(req, res){
   }
   query.skip(offset).limit(limit)
   query.exec(function (err, recipes) {
-    data_recipes = []
     if (err) {
       rData = {error: "recipes: f(router.post'/search')"}
       log.writeLog(req, "recipes", 500, rData)
       res.send(500, rData)
+    } else {
+      // Count the number of solution for this request (limit is deleted)
+      query.count(function(err, c) {
+        data_recipes = []
+        if (err) {
+          rData = {error: "recipes: f(router.post'/search')"}
+          log.writeLog(req, "recipes", 500, rData)
+          res.send(500, rData)
+        } else if (recipes) {
+          for (var i = 0; i < recipes.length; i++) {
+            data_recipes.push(recipes[i].information(auth.user_id()))
+          }
+        }
+        rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length, max: c}
+        log.writeLog(req, "recipes", 200, rData)
+        res.send(200, rData)
+      });
     }
-    else if (recipes) {
-      for (var i = 0; i < recipes.length; i++) {
-        data_recipes.push(recipes[i].information(auth.user_id()))
-      }
-    }
-    rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length}
-    log.writeLog(req, "recipes", 200, rData)
-    res.send(200, rData)
   });
 })
 

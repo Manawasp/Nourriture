@@ -49,21 +49,30 @@ router.post('/search', function(req, res){
     query.where('labels').in(params.labels);
   }
   query.skip(offset).limit(limit)
-  query.exec(function (err, ingredients) {
-    data_ingredient = []
+  // Apply the request
+  query.exec(function(err, ingredients) {
     if (err) {
-      rData = {error: "f(router.post'/search')"}
+      rData = {error: "f(router.post'/search'in count)"}
       log.writeLog(req, "ingredients", 500, rData)
       res.send(500, rData)
+    } else {
+      // Count the number of solution for this request (limit is deleted)
+      query.count(function(err, c) {
+        data_ingredient = []
+        if (err) {
+          rData = {error: "f(router.post'/search'in count)"}
+          log.writeLog(req, "ingredients", 500, rData)
+          res.send(500, rData)
+        } else if (ingredients) {
+          for (var i = 0; i < ingredients.length; i++) {
+            data_ingredient.push(ingredients[i].information())
+          }
+        }
+        rData = {ingredients: data_ingredient, limit: limit, offset: offset, size: data_ingredient.length, max: c}
+        log.writeLog(req, "ingredients", 200, rData)
+        res.send(200, rData)
+      });
     }
-    else if (ingredients) {
-      for (var i = 0; i < ingredients.length; i++) {
-        data_ingredient.push(ingredients[i].information())
-      }
-    }
-    rData = {ingredients: data_ingredient, limit: limit, offset: offset, size: data_ingredient.length}
-    log.writeLog(req, "ingredients", 200, rData)
-    res.send(200, rData)
   });
 })
 

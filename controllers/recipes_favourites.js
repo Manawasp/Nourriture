@@ -25,30 +25,39 @@ router.use(function(req, res, next) {
  */
 
 router.post('/search', function(req, res){
- res.type('application/json');
- params = req.body
- offset = 0
- limit = 11
- if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
- if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
- query.where('likes').in([auth.user_id()])
- query.skip(offset).limit(limit)
- query.exec(function (err, recipes) {
-   data_recipes = []
-   if (err) {
-     rData = {error: "recipes: f(router.post'/favourites')"}
-     log.writeLog(req, "favourites", 500, rData)
-     res.send(500, rData)
-   }
-   else if (recipes) {
-     for (var i = 0; i < recipes.length; i++) {
-       data_recipes.push(recipes[i].information(auth.user_id()))
-     }
-   }
-   rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length}
-   log.writeLog(req, "favourites", 200, rData)
-   res.send(200, rData)
- });
+  res.type('application/json');
+  params = req.body
+  offset = 0
+  limit = 11
+  query = Recipe.find({})
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
+  query.where('likes').in([auth.user_id()])
+  query.skip(offset).limit(limit)
+  query.exec(function (err, recipes) {
+    if (err) {
+      rData = {error: "recipes: f(router.post'/favourites')"}
+      log.writeLog(req, "favourites", 500, rData)
+      res.send(500, rData)
+    } else {
+      query.count(function (err, c) {
+        data_recipes = []
+        if (err) {
+          rData = {error: "recipes: f(router.post'/favourites')"}
+          log.writeLog(req, "favourites", 500, rData)
+          res.send(500, rData)
+        }
+        else if (recipes) {
+          for (var i = 0; i < recipes.length; i++) {
+            data_recipes.push(recipes[i].information(auth.user_id()))
+          }
+        }
+        rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length, max: c}
+        log.writeLog(req, "favourites", 200, rData)
+        res.send(200, rData)
+      });
+    }
+  });
 })
 
 /**
