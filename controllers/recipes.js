@@ -29,7 +29,6 @@ router.use(function(req, res, next) {
 
 router.post('/search', function(req, res){
   res.type('application/json');
-  res.type('application/json')
   params = req.body
   if (params.title) {
     var re = new RegExp(params.title, 'i');
@@ -69,7 +68,7 @@ router.post('/search', function(req, res){
     }
     else if (recipes) {
       for (var i = 0; i < recipes.length; i++) {
-        data_recipes.push(recipes[i].information())
+        data_recipes.push(recipes[i].information(auth.user_id()))
       }
     }
     rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length}
@@ -227,7 +226,7 @@ var valid_create_recipe = function(recipe, req, res) {
 }
 
 var show_recipe = function(recipe, req, res) {
-  data_recipe = recipe.information()
+  data_recipe = recipe.information(auth.user_id())
   User.findOne({'_id': recipe.created_by}, '', function(err, user) {
     data_user = {}
     if (user) {

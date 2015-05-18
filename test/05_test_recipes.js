@@ -581,7 +581,7 @@ describe('Recipes Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.recipe.image).to.equal("http://localhost:8080/pictures/recipes/" +recipe_id +".jpg");
+        expect(res.body.recipe.image).to.match(/^http:\/\/localhost:8080\/pictures\/recipes\/(.*).jpg$/);
         done()
       });
     });

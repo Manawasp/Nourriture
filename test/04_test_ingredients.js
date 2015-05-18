@@ -538,7 +538,7 @@ describe('Ingredients Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.icon).to.equal("http://localhost:8080/pictures/ingredients/" + ingredients[1].id +".jpg");
+        expect(res.body.icon).to.match(/^http:\/\/localhost:8080\/pictures\/ingredients\/(.*).jpg$/);
         done()
       });
     });
