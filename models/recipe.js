@@ -192,7 +192,7 @@ Recipe.methods.unlike = function(user_id) {
 
 Recipe.methods.information = function(user_id) {
   user_like = false
-  if (user_id != undefined && this.likes.indexOf(user_id) != -1) {user_like = true)
+  if (user_id != undefined && this.likes.indexOf(user_id) != -1) {user_like = true}
   return {id:           this._id,
           image:        this.image,
           title:        this.title,
