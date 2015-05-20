@@ -14,7 +14,7 @@ router.use('/moments',      	  require('./moments'));
 router.use('/recipes',      	  require('./recipes'));
 router.use('/comments/moments',	require('./moments_comments'));
 router.use('/comments/recipes',	require('./recipes_comments'));
-router.use('/favourites',       require('./recipes_favourites'));
+router.use('/favorites',       require('./recipes_favorites'));
 router.use('/like/moments',    	require('./moments_like'));
 router.use('/pictures/',   		  require('./pictures'));
 router.use('/homepage/',   		  require('./comrecipe'));
