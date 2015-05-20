@@ -1,0 +1,16 @@
+mongo:
+  image: mongo
+  ports:
+    - "27017:27017"
+redis:
+  image: redis
+  ports:
+    - "6379:6379"
+web:
+  build: .
+  command: node /src/app.js
+  ports:
+    - "8080:8080"
+  links:
+    - mongo
+    - redis

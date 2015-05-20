@@ -7,7 +7,7 @@ var	bunyan      = require('bunyan')
 	, log         = bunyan.createLogger({
 										name: "foodapi",
 										streams: [{
-											path: 'logs/api.log'
+											path: 'api.log'
 										}]
 									});
 

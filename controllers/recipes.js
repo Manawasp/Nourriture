@@ -12,7 +12,18 @@ var express     = require('express')
   , Comment     = mongoose.model('Comment')
   , Recipe      = mongoose.model('Recipe')
   , auth        = require('./services/authentification')
-  , log         = require('./services/log');
+  , log         = require('./services/log')
+  , tabLabels   = []
+  , tabDenied   = []
+
+/**
+ * Super Var for label and denied in search request
+ */
+
+var initTab = function() {
+  tabLabels = ['breakfast', 'brunch','diner','appetizer','dessert','healty','main','slow','quick', 'vegetarian','sauce','fruit','vegetable','sea','fish','spicy','meat']
+  tabDenied = ['arachide', 'egg','milk','halal','kascher']
+}
 
 /**
  * Router middleware
@@ -27,46 +38,19 @@ router.use(function(req, res, next) {
  * [SEARCH] Recipes
  */
 
-router.post('/search', function(req, res){
-  res.type('application/json');
-  params = req.body
-  if (params.title) {
-    var re = new RegExp(params.title, 'i');
-    query = Recipe.find({'title': re})
-  } else {
-    query = Recipe.find({})
-  }
-  offset = 0
-  limit = 11
-  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
-  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
-  if (params.blacklist && Array.isArray(params.blacklist)) {
-    query.where('blacklist').nin(params.blacklist);
-  }
-  if (params.labels && Array.isArray(params.labels)) {
-    query.where('labels').in(params.labels);
-  }
-  if (params.ingredients && Array.isArray(params.ingredients)) {
-    query.where('ingredients').in(params.ingredients);
-  }
-  if (params.savours && Array.isArray(params.savours)) {
-    query.where('savours').in(params.savours);
-  }
-  if (typeof params.country == 'string') {
-    query.where('country').equals(params.country);
-  }
-  if (typeof params.created_by == 'string') {
-    query.where('created_by').equals(params.create_by);
-  }
-  query.skip(offset).limit(limit)
+var execAndAnswer = function(req, res, query) {
+  console.log("Pas de requete ?")
   query.exec(function (err, recipes) {
     if (err) {
+      console.log("Putian d'erruer ?")
+      console.log(err)
       rData = {error: "recipes: f(router.post'/search')"}
       log.writeLog(req, "recipes", 500, rData)
       res.send(500, rData)
     } else {
       // Count the number of solution for this request (limit is deleted)
       query.count(function(err, c) {
+        console.log("SEARCH NUMBER OF RESULTS : "+ c)
         data_recipes = []
         if (err) {
           rData = {error: "recipes: f(router.post'/search')"}
@@ -83,6 +67,65 @@ router.post('/search', function(req, res){
       });
     }
   });
+}
+
+var searchCompleteQuery = function(req, res, params, query, r2query) {
+  offset = 0
+  limit = 11
+  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
+  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
+  if (r2query != undefined && r2query.length > 0) {
+    query.where('blacklist').nin(r2query);
+  }
+  if (r2query != undefined && r2query.length > 0) {
+    query.where('labels').in(r2query);
+  }
+  // if (typeof params.country == 'string') {
+  //   query.where('country').equals(params.country);
+  // }
+  if (typeof params.created_by == 'string') {
+    query.where('created_by').equals(params.create_by);
+  }
+  query.skip(offset).limit(limit)
+  execAndAnswer(req, res, query)
+}
+
+var searchInitQuery = function(req, res, params) {
+  var r2query = undefined
+  if (params.title) {
+    elem = params.title.split(' ');
+    query = Recipe.find({})
+    // .where('title').in(elem)
+    // Search ingredient
+    r2query = Ingredient.find({}).where('name').in(elem)
+    r2query.exec(function (err, ingredients) {
+      if (err) {
+        searchCompleteQuery(req, res, params, query, elem)
+      } else {
+        console.log("Succes ingredients search :")
+        console.log(ingredients)
+        var ingr = []
+        for (var i = 0; i < ingredients.length; i++) {
+          ingr.push(ingredients[i]._id.toString())
+        }
+        console.log("ingr")
+        console.log(ingr)
+        if (ingr.length > 0) {
+
+          query.where('ingredients').in(ingr);
+        }
+        searchCompleteQuery(req, res, params, query, elem)
+      }
+    });
+  } else {
+    query = Recipe.find({})
+    searchCompleteQuery(req, res, params, query)
+  }
+}
+
+router.post('/search', function(req, res){
+  res.type('application/json');
+  searchInitQuery(req, res, req.body)
 })
 
 /**
