@@ -21,7 +21,7 @@ router.use(function(req, res, next) {
 })
 
 /**
- * [POST] Search favourites
+ * [POST] Search favorites
  */
 
 router.post('/search', function(req, res){
@@ -36,15 +36,15 @@ router.post('/search', function(req, res){
   query.skip(offset).limit(limit)
   query.exec(function (err, recipes) {
     if (err) {
-      rData = {error: "recipes: f(router.post'/favourites')"}
-      log.writeLog(req, "favourites", 500, rData)
+      rData = {error: "recipes: f(router.post'/favorites')"}
+      log.writeLog(req, "favorites", 500, rData)
       res.send(500, rData)
     } else {
       query.count(function (err, c) {
         data_recipes = []
         if (err) {
-          rData = {error: "recipes: f(router.post'/favourites')"}
-          log.writeLog(req, "favourites", 500, rData)
+          rData = {error: "recipes: f(router.post'/favorites')"}
+          log.writeLog(req, "favorites", 500, rData)
           res.send(500, rData)
         }
         else if (recipes) {
@@ -53,7 +53,7 @@ router.post('/search', function(req, res){
           }
         }
         rData = {recipes: data_recipes, limit: limit, offset: offset, size: data_recipes.length, max: c}
-        log.writeLog(req, "favourites", 200, rData)
+        log.writeLog(req, "favorites", 200, rData)
         res.send(200, rData)
       });
     }
@@ -61,7 +61,7 @@ router.post('/search', function(req, res){
 })
 
 /**
- * [POST] favourites Recipe
+ * [POST] favorites Recipe
  */
 
 router.post('/recipes/:rid', function(req, res){
@@ -71,26 +71,26 @@ router.post('/recipes/:rid', function(req, res){
       error = recipe.like(auth.user_id())
       if (error) {
         rData = {error: error}
-        log.writeLog(req, "recipesfavourites", 400, rData)
+        log.writeLog(req, "recipesfavorites", 400, rData)
         res.send(400, rData)
       }
       else {
         recipe.save()
-        rData = {success: 'you favourites the recipe'}
-        log.writeLog(req, "recipesfavourites", 200, rData)
+        rData = {success: 'you favorites the recipe'}
+        log.writeLog(req, "recipesfavorites", 200, rData)
         res.send(200, rData)
       }
     }
     else {
       rData = {error: 'resource not found'}
-      log.writeLog(req, "recipesfavourites", 404, rData)
+      log.writeLog(req, "recipesfavorites", 404, rData)
       res.send(404, rData)
     }
   });
 })
 
 /**
- * [DELETE] Unlfavourites Recipe
+ * [DELETE] Unlfavorites Recipe
  */
 
 router.delete('/recipes/:rid', function(req, res){
@@ -100,19 +100,19 @@ router.delete('/recipes/:rid', function(req, res){
       error = recipe.unlike(auth.user_id())
       if (error) {
         rData = {error: error}
-        log.writeLog(req, "recipesfavourites", 400, rData)
+        log.writeLog(req, "recipesfavorites", 400, rData)
         res.send(400, rData)
       }
       else {
         recipe.save()
-        rData = {success: 'you unfavourites the recipe'}
-        log.writeLog(req, "recipesfavourites", 200, rData)
+        rData = {success: 'you unfavorites the recipe'}
+        log.writeLog(req, "recipesfavorites", 200, rData)
         res.send(200, rData)
       }
     }
     else {
       rData = {error: 'resource not found'}
-      log.writeLog(req, "recipesfavourites", 404, rData)
+      log.writeLog(req, "recipesfavorites", 404, rData)
       res.send(404, rData)
     }
   });

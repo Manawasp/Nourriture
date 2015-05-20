@@ -57,11 +57,11 @@ describe('RecipesFavorites Controller', function(){
     });
   });
 
-  describe('CREATE RecipesFavourites', function(){
+  describe('CREATE Recipesfavorites', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .post('localhost:8080/favourites/recipes/' + recipe_id)
+      .post('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -75,7 +75,7 @@ describe('RecipesFavorites Controller', function(){
 
     it ("404: resource not found", function(done){
      request
-      .post('localhost:8080/favourites/recipes/dowkpodwkpokwd')
+      .post('localhost:8080/favorites/recipes/dowkpodwkpokwd')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -88,9 +88,9 @@ describe('RecipesFavorites Controller', function(){
       });
     });
 
-    it ("200: favourites with success", function(done){
+    it ("200: favorites with success", function(done){
      request
-      .post('localhost:8080/favourites/recipes/' + recipe_id)
+      .post('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -98,14 +98,14 @@ describe('RecipesFavorites Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.success).to.equal("you favourites the recipe");
+        expect(res.body.success).to.equal("you favorites the recipe");
         done()
       });
     });
 
-    it ("400: already favourites", function(done){
+    it ("400: already favorites", function(done){
      request
-      .post('localhost:8080/favourites/recipes/' + recipe_id)
+      .post('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -113,17 +113,17 @@ describe('RecipesFavorites Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(400);
-        expect(res.body.error).to.equal("you already favourites this recipe");
+        expect(res.body.error).to.equal("you already favorites this recipe");
         done()
       });
     });
 
   });
 
-  describe('SEARCH Recipesfavourites', function(){
+  describe('SEARCH Recipesfavorites', function(){
     it ("200: search without limit", function(done){
      request
-      .post('localhost:8080/favourites/search')
+      .post('localhost:8080/favorites/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -139,7 +139,7 @@ describe('RecipesFavorites Controller', function(){
 
     it ("200: search without limit", function(done){
      request
-      .post('localhost:8080/favourites/search')
+      .post('localhost:8080/favorites/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{"offset":2}')
@@ -154,11 +154,11 @@ describe('RecipesFavorites Controller', function(){
     });
   });
 
-  describe('DELETE Recipesfavourites', function(){
+  describe('DELETE Recipesfavorites', function(){
 
     it ("401: unhautorized if not connected", function(done){
      request
-      .del('localhost:8080/favourites/recipes/' + recipe_id)
+      .del('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .send('{}')
       .end(function(res)
@@ -172,7 +172,7 @@ describe('RecipesFavorites Controller', function(){
 
     it ("404: resource not found", function(done){
      request
-      .del('localhost:8080/favourites/recipes/dowkpodwkpokwd')
+      .del('localhost:8080/favorites/recipes/dowkpodwkpokwd')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
       .send('{}')
@@ -185,9 +185,9 @@ describe('RecipesFavorites Controller', function(){
       });
     });
 
-    it ("200: unfavourites with success", function(done){
+    it ("200: unfavorites with success", function(done){
      request
-      .del('localhost:8080/favourites/recipes/' + recipe_id)
+      .del('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -195,14 +195,14 @@ describe('RecipesFavorites Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(200);
-        expect(res.body.success).to.equal("you unfavourites the recipe");
+        expect(res.body.success).to.equal("you unfavorites the recipe");
         done()
       });
     });
 
-    it ("400: already favourites", function(done){
+    it ("400: already favorites", function(done){
      request
-      .del('localhost:8080/favourites/recipes/' + recipe_id)
+      .del('localhost:8080/favorites/recipes/' + recipe_id)
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
       .send('{}')
@@ -210,17 +210,17 @@ describe('RecipesFavorites Controller', function(){
       {
         expect(res).to.exist;
         expect(res.status).to.equal(400);
-        expect(res.body.error).to.equal("you don't favourites this recipe");
+        expect(res.body.error).to.equal("you don't favorites this recipe");
         done()
       });
     });
 
   });
 
-    describe('SEARCH Recipesfavourites', function(){
+    describe('SEARCH Recipesfavorites', function(){
       it ("200: search without limit", function(done){
        request
-        .post('localhost:8080/favourites/search')
+        .post('localhost:8080/favorites/search')
         .set('Content-Type', 'application/json')
         .set('Auth-Token', users[1].token)
         .send('{}')
