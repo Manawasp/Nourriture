@@ -10,7 +10,7 @@
 /**
  * load librairie
  */
-
+ setTimeout(function() {
 var express     = require('express')
   , db          = require('./db')
   , bodyParser  = require('body-parser')
@@ -73,3 +73,4 @@ buildDirPicture('/public/pictures/recipes')
 
 app.listen(port);
 console.log('Express server listening on port ' + port);
+}, 10000);

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
- 
+
 require('./models/user')
 require('./models/comment')
 require('./models/ingredient')
@@ -13,7 +13,9 @@ require('./models/recipe')
 // 	});
 
 
-mongoose.connect('mongodb://localhost/foodapi');
+var envDB       = (process.env.MONGO_1_PORT_27017_TCP_ADDR || 'localhost')
+console.log('mongodb://'+ envDB +'/foodapi')
+mongoose.connect('mongodb://'+ envDB +'/foodapi');
 
 var Ingredient 	= mongoose.model('Ingredient');
 var Moment 	= mongoose.model('Moment');

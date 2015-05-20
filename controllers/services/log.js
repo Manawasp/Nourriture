@@ -3,7 +3,7 @@
  * Static var
  */
 
-var	bunyan      = require('bunyan');
+// var	bunyan      = require('bunyan');
 	// , log         = bunyan.createLogger({
 	// 									name: "foodapi",
 	// 									streams: [{
