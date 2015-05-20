@@ -73,4 +73,4 @@ buildDirPicture('/public/pictures/recipes')
 
 app.listen(port);
 console.log('Express server listening on port ' + port);
-}, 10000);
+}, 5000);
