@@ -1,0 +1,9 @@
+web:
+  build: .
+  command: node /src/app.js
+  ports:
+    - "8080:8080"
+  links:
+    - db
+db:
+  image: mongo
