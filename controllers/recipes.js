@@ -13,17 +13,31 @@ var express     = require('express')
   , Recipe      = mongoose.model('Recipe')
   , auth        = require('./services/authentification')
   , log         = require('./services/log')
-  , tabLabels   = []
-  , tabDenied   = []
 
 /**
  * Super Var for label and denied in search request
  */
 
-var initTab = function() {
-  tabLabels = ['breakfast', 'brunch','diner','appetizer','dessert','healty','main','slow','quick', 'vegetarian','sauce','fruit','vegetable','sea','fish','spicy','meat']
-  tabDenied = ['arachide', 'egg','milk','halal','kascher']
+var epurArray = function(arr) {
+  newArr = []
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].length > 2) {
+      newArr.push(arr[i])
+    }
+  }
+  return newArr
 }
+
+var matchBetweenArrays = function(arrays) {
+  return arrays.shift().filter(function(v) {
+    return arrays.every(function(a) {
+        return a.indexOf(v) !== -1;
+    });
+  });
+}
+
+var  tabLabels = ['breakfast', 'brunch','diner','appetizer','dessert','healty','main','slow','quick', 'vegetarian','sauce','fruit','vegetable','sea','fish','spicy','meat']
+var  tabDenied = ['arachide', 'egg','milk','halal','kascher']
 
 /**
  * Router middleware
@@ -69,16 +83,33 @@ var execAndAnswer = function(req, res, query) {
   });
 }
 
-var searchCompleteQuery = function(req, res, params, query, r2query) {
+var searchCompleteQuery = function(req, res, params, query, elements) {
   offset = 0
   limit = 11
+  console.log("search launched...")
+  if (elements != undefined && elements.length > 0) {
+    console.log("--BEFORE")
+    console.log("ELEMENT: ")
+    console.log(elements)
+    console.log("LABELS DEF:")
+    console.log(tabLabels)
+    labels = matchBetweenArrays([elements, tabLabels])
+    denied = matchBetweenArrays([elements, tabDenied])
+    console.log("--AFTER")
+    console.log("MATCH:")
+    console.log(labels)
+    console.log("ELEMENT: ")
+    console.log(elements)
+    console.log("LABELS DEF:")
+    console.log(tabLabels)
+  }
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
-  if (r2query != undefined && r2query.length > 0) {
-    query.where('blacklist').nin(r2query);
+  if (denied != undefined && denied.length > 0) {
+    query.where('blacklist').nin(denied);
   }
-  if (r2query != undefined && r2query.length > 0) {
-    query.where('labels').in(r2query);
+  if (labels != undefined && labels.length > 0) {
+    query.where('labels').in(labels);
   }
   // if (typeof params.country == 'string') {
   //   query.where('country').equals(params.country);
@@ -94,7 +125,8 @@ var searchInitQuery = function(req, res, params) {
   var r2query = undefined
   if (params.title) {
     elem = params.title.split(' ');
-    query = Recipe.find({})
+    elem = epurArray(elem);
+    query = Recipe.find({});
     // .where('title').in(elem)
     // Search ingredient
     r2query = Ingredient.find({}).where('name').in(elem)
@@ -125,6 +157,7 @@ var searchInitQuery = function(req, res, params) {
 
 router.post('/search', function(req, res){
   res.type('application/json');
+  console.log("search init...")
   searchInitQuery(req, res, req.body)
 })
 
