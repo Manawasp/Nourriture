@@ -204,9 +204,9 @@ var valid_create_moment = function(moment, req, res) {
 var show_moment = function(moment, req, res) {
   data_moment = moment.information()
   User.findOne({'_id': moment.created_by}, '', function(err, user) {
-    create_by = {}
+    created_by = {}
     if (user) {
-      create_by = user.information()
+      created_by = user.information()
     }
     Ingredient.find({'_id': moment.ingredients}, '', function(err, ingredients) {
       data_ingredient = []
@@ -222,7 +222,7 @@ var show_moment = function(moment, req, res) {
             users_data.push(users[i].information())
           }
         }
-        rData = {created_by: create_by,
+        rData = {created_by: created_by,
                   ingredients: data_ingredient,
                   users: users_data,
                   moment: data_moment}
