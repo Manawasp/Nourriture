@@ -102,6 +102,9 @@ var searchCompleteQuery = function(req, res, params, query, elements) {
     console.log(elements)
     console.log("LABELS DEF:")
     console.log(tabLabels)
+  } else {
+    denied = []
+    labels = []
   }
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
@@ -115,7 +118,7 @@ var searchCompleteQuery = function(req, res, params, query, elements) {
   //   query.where('country').equals(params.country);
   // }
   if (typeof params.created_by == 'string') {
-    query.where('created_by').equals(params.create_by);
+    query.where('created_by').equals(params.created_by);
   }
   query.skip(offset).limit(limit)
   execAndAnswer(req, res, query)
@@ -212,7 +215,7 @@ router.patch('/:rid', function(req, res){
   res.type('application/json');
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
-      if (auth.access_admin() || recipe.create_by == auth.user_id()) {
+      if (auth.access_admin() || recipe.created_by == auth.user_id()) {
         error = recipe.update(req.body)
         if (error) {
           rData = {error: error}
