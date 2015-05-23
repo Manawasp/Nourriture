@@ -2,28 +2,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var random = require('mongoose-random');
 
-var Media = new Schema({
-    url         : String,
-    size        : Number,
-    format      : String,
-    created_at  : Date,
-    updated_at  : Date
-});
-
-var Duration = {
-  h   : Number,
-  m   : Number
-}
-
-var Part = {
-  title         : String,
-  Description   : String
-}
-
-var Mark_by = {
-  user: String,
-  value: Number
-}
+var Review = new Schema({
+  mark          : Number,
+  userId        : String,
+  comment       : String
+})
 
 var Recipe = new Schema({
     title       : String,
@@ -31,12 +14,12 @@ var Recipe = new Schema({
     ingredients : [String],
     people      : Number,
     image       : String,
+    reviews     : [Review],
     mark        : Number,
     hours       : Number,
     minutes     : Number,
     steps       : [String],
     parts       : String,
-    pictures    : [Media],
     comments    : [String],
     likes       : [String],
     labels      : [String],
@@ -66,10 +49,8 @@ Recipe.methods.create = function(params, user_id) {
     this.image        = params.image || ""
     this.ingredients  = params.ingredients || []
     this.people       = params.people || 0
-    this.pictures     = []
     this.likes        = []
-    this.comments     = []
-    this.mark_list    = []
+    this.reviews      = []
     this.mark         = 0
     this.steps        = params.steps      || []
     this.labels       = params.labels     || []
@@ -145,22 +126,43 @@ Recipe.methods.update = function(params) {
 }
 
 /**
- * Comments Method
+ * Review Method
  */
 
-Recipe.methods.add_comment = function(comment_id) {
-  this.comments.push(comment_id)
-  return null
+Recipe.methods.calcMark = function() {
+  mark = 0
+  n = 0
+  while (n < this.reviews.length) {
+    mark += this.reviews[n].mark;
+    n++;
+  }
+  this.mark = mark / n;
 }
 
-Recipe.methods.remove_comment = function(comment_id) {
-  index_tab = this.comments.indexOf(comment_id)
-  if (index_tab == -1) {
-    return "not found comment"
-  } else {
-    this.comments.splice(index_tab, 1)
-    return null
+Recipe.methods.addReview = function(userId, mark, comment) {
+  // Create or update ?
+  for (var i = 0; i < this.reviews.length; i++) {
+    if (this.reviews[i].userId == userId) {
+      // Update review
+      this.reviews[i].comment = comment;
+      this.reviews[i].mark = mark;
+      return {success: "Review updated"};
+    }
   }
+  // Create review
+  this.reviews.push({userId: userId, mark: mark, comment: comment});
+  return {success: "Review added"};
+}
+
+Recipe.methods.removeReview = function(userId) {
+  // Create or update ?
+  for (var i = 0; i < this.reviews.length; i++) {
+    if (this.reviews[i].userId == userId) {
+      this.reviews.splice(i, 1)
+      return {success: "Review removed"};
+    }
+  }
+  return {error: "Review not found"};
 }
 
 /**
@@ -200,10 +202,10 @@ Recipe.methods.information = function(user_id) {
           ingredients_length:  this.ingredients.length,
           labels:       this.labels,
           blacklist:    this.blacklist,
-          mark:         3.6,
+          mark:         this.mark,
           likes:        this.likes.length,
           liked:        user_like,
-          comments_length:     this.comments.length,
+          reviews:      this.reviews.length,
           people:       this.people,
           steps:        this.steps,
           parts:        this.parts,
