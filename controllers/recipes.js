@@ -147,7 +147,6 @@ var searchInitQuery = function(req, res, params) {
 
 router.post('/search', function(req, res){
   res.type('application/json');
-  console.log("search init...")
   searchInitQuery(req, res, req.body)
 })
 
