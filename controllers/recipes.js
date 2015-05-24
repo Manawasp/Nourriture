@@ -27,6 +27,12 @@ var epurArray = function(arr) {
   return newArr
 }
 
+var uniqArray = function(array1, array2) {
+  return array1.filter(function(val) {
+    return array2.indexOf(val) == -1;
+  });
+}
+
 var matchBetweenArrays = function(arrays) {
   return arrays.shift().filter(function(v) {
     return arrays.every(function(a) {
@@ -52,18 +58,14 @@ router.use(function(req, res, next) {
  */
 
 var execAndAnswer = function(req, res, query) {
-  console.log("Pas de requete ?")
   query.exec(function (err, recipes) {
     if (err) {
-      console.log("Putian d'erruer ?")
-      console.log(err)
       rData = {error: "recipes: f(router.post'/search')"}
       log.writeLog(req, "recipes", 500, rData)
       res.send(500, rData)
     } else {
       // Count the number of solution for this request (limit is deleted)
       query.count(function(err, c) {
-        console.log("SEARCH NUMBER OF RESULTS : "+ c)
         data_recipes = []
         if (err) {
           rData = {error: "recipes: f(router.post'/search')"}
@@ -82,29 +84,9 @@ var execAndAnswer = function(req, res, query) {
   });
 }
 
-var searchCompleteQuery = function(req, res, params, query, elements) {
+var searchCompleteQuery = function(req, res, params, query, elements, labels, denied) {
   offset = 0
   limit = 11
-  console.log("search launched...")
-  if (elements != undefined && elements.length > 0) {
-    console.log("--BEFORE")
-    console.log("ELEMENT: ")
-    console.log(elements)
-    console.log("LABELS DEF:")
-    console.log(tabLabels)
-    labels = matchBetweenArrays([elements, tabLabels])
-    denied = matchBetweenArrays([elements, tabDenied])
-    console.log("--AFTER")
-    console.log("MATCH:")
-    console.log(labels)
-    console.log("ELEMENT: ")
-    console.log(elements)
-    console.log("LABELS DEF:")
-    console.log(tabLabels)
-  } else {
-    denied = []
-    labels = []
-  }
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 31) {limit = params.limit}
   if (denied != undefined && denied.length > 0) {
@@ -124,11 +106,21 @@ var searchCompleteQuery = function(req, res, params, query, elements) {
 }
 
 var searchInitQuery = function(req, res, params) {
-  var r2query = undefined
-  if (params.title) {
+  r2query = undefined
+  denied = []
+  labels = []
+  elem = []
+  if (params.title != undefined) {
     elem = params.title.split(' ');
     elem = epurArray(elem);
-    query = Recipe.find({});
+    if (elem != undefined && elem.length > 0) {
+      labels = matchBetweenArrays([elem, tabLabels])
+      denied = matchBetweenArrays([elem, tabDenied])
+      elem = uniqArray(uniqArray(elem, denied), labels)
+    }
+  }
+  query = Recipe.find({});
+  if (params.title && elem.length > 0) {
     // .where('title').in(elem)
     // Search ingredient
     r2query = Ingredient.find({}).where('name').in(elem)
@@ -136,30 +128,25 @@ var searchInitQuery = function(req, res, params) {
       if (err) {
         searchCompleteQuery(req, res, params, query, elem)
       } else {
-        console.log("Succes ingredients search :")
-        console.log(ingredients)
         var ingr = []
         for (var i = 0; i < ingredients.length; i++) {
           ingr.push(ingredients[i]._id.toString())
         }
-        console.log("ingr")
-        console.log(ingr)
         if (ingr.length > 0) {
-
-          query.where('ingredients').in(ingr);
+          query.or([{ingredient: {$in: ingr}}, {breakTitle: {$in: elem}}]);
+        } else {
+          query.where('breakTitle').in(elem);
         }
-        searchCompleteQuery(req, res, params, query, elem)
+        searchCompleteQuery(req, res, params, query, elem, labels, denied)
       }
     });
   } else {
-    query = Recipe.find({})
-    searchCompleteQuery(req, res, params, query)
+    searchCompleteQuery(req, res, params, query, elem, labels, denied)
   }
 }
 
 router.post('/search', function(req, res){
   res.type('application/json');
-  console.log("search init...")
   searchInitQuery(req, res, req.body)
 })
 
