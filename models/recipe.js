@@ -10,6 +10,7 @@ var Review = new Schema({
 
 var Recipe = new Schema({
     title       : String,
+    breakTitle  : [String],
     description : String,
     ingredients : [String],
     people      : Number,
@@ -58,6 +59,16 @@ Recipe.methods.create = function(params, user_id) {
     this.created_by   = user_id
     this.created_at   = new Date
     this.updated_at   = new Date
+    // breakTitle
+    this.breakTitle   = []
+    if (this.title != undefined && this.title.length > 0) {
+      this.breakTitle = this.title.replace("-", " ").replace(".", " ").toLowerCase().split(" ");
+      for (var i = 0; i < breakTitle.length; i++){
+        if (breakTitle[i].length <= 2) {
+          breakTitle = breakTitle.splice(i, 1);
+        }
+      }
+    }
 
     /* INIT OBJ TABLE */
 
@@ -107,6 +118,16 @@ Recipe.methods.update = function(params) {
     this.labels       = params.labels       || this.labels
     this.blacklist    = params.blacklist    || this.blacklist
     this.updated_at   = new Date
+    // breakTitle
+    this.breakTitle   = []
+    if (this.title != undefined && this.title.length > 0) {
+      this.breakTitle = this.title.replace("-", " ").replace(".", " ").toLowerCase().split(" ");
+      for (var i = 0; i < this.breakTitle.length; i++){
+        if (this.breakTitle[i].length <= 2) {
+          this.breakTitle = this.breakTitle.splice(i, 1);
+        }
+      }
+    }
 
     if (params.time_total != undefined) {
       if (params.time_total.m != undefined) {
