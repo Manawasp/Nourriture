@@ -90,7 +90,7 @@ router.post('/:rid', function(req, res){
 
 router.delete('/:rid', function(req, res){
   res.type('application/json');
-  params = res.body
+  params = req.body
   Recipe.findOne({'_id': req.params.rid}, '', function(err, recipe) {
     if (recipe) {
       if (params.userId != undefined) {

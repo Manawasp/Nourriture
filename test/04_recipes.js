@@ -123,7 +123,7 @@ describe('Recipes Controller', function(){
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
-      .send('{"title":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"], "savours": ["sugar"], "labels": ["grandchallenge"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
+      .send('{"title":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"], "labels": ["dessert"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
       .end(function(res)
       {
         expect(res).to.exist;
@@ -312,7 +312,7 @@ describe('Recipes Controller', function(){
       .post('localhost:8080/recipes')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[1].token)
-      .send('{"title":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"], "savours": ["sugar"], "labels": ["grandchallenge"], "blacklist": ["musulman"], "country": "france", "city": "paris"}')
+      .send('{"title":"Pork with sugar", "ingredients": ["'+ingredients[0].id+'", "'+ingredients[1].id+'"], "labels": ["dessert"]}')
       .end(function(res)
       {
         expect(res).to.exist;
@@ -398,33 +398,12 @@ describe('Recipes Controller', function(){
       });
     });
 
-    it ("200: search without pattern + savours", function(done){
-     request
-      .post('localhost:8080/recipes/search')
-      .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[0].token)
-      .send('{"savours":["sugar"]}')
-      .end(function(res)
-      {
-        console.log(res.body)
-        // expect(res.status).to.equal(200);
-        // expect(res.body.recipes).to.exist;
-        // expect(res.body.recipes.length).to.equal(1);
-        // expect(res.body.size).to.exist;
-        // expect(res.body.size).to.equal(1);
-        // expect(res.body.offset).to.exist;
-        // expect(res.body.offset).to.equal(0);
-        // expect(res.body.limit).to.exist;
-        done()
-      });
-    });
-
     it ("200: search without pattern but with blacklist 'musulman'", function(done){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
-      .send('{"blacklist":["musulman"]}')
+      .send('{"title":"musulman"}')
       .end(function(res)
       {
         expect(res.status).to.equal(200);
@@ -459,33 +438,12 @@ describe('Recipes Controller', function(){
       });
     });
 
-    it ("200: search without pattern but with country", function(done){
-     request
-      .post('localhost:8080/recipes/search')
-      .set('Content-Type', 'application/json')
-      .set('Auth-Token', users[0].token)
-      .send('{"country": "france"}')
-      .end(function(res)
-      {
-        // console.log(res.body)
-        // expect(res.status).to.equal(200);
-        // expect(res.body.recipes).to.exist;
-        // expect(res.body.recipes.length).to.equal(1);
-        // expect(res.body.size).to.exist;
-        // expect(res.body.size).to.equal(1);
-        // expect(res.body.offset).to.exist;
-        // expect(res.body.offset).to.equal(0);
-        // expect(res.body.limit).to.exist;
-        done()
-      });
-    });
-
     it ("200: search without pattern but with labels", function(done){
      request
       .post('localhost:8080/recipes/search')
       .set('Content-Type', 'application/json')
       .set('Auth-Token', users[0].token)
-      .send('{"labels": ["grandchallenge"]}')
+      .send('{"title": "dessert"}')
       .end(function(res)
       {
         expect(res.status).to.equal(200);
