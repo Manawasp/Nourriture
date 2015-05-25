@@ -63,9 +63,9 @@ Recipe.methods.create = function(params, user_id) {
     this.breakTitle   = []
     if (this.title != undefined && this.title.length > 0) {
       this.breakTitle = this.title.replace("-", " ").replace(".", " ").toLowerCase().split(" ");
-      for (var i = 0; i < breakTitle.length; i++){
-        if (breakTitle[i].length <= 2) {
-          breakTitle = breakTitle.splice(i, 1);
+      for (var i = 0; i < this.breakTitle.length; i++){
+        if (this.breakTitle[i].length <= 2) {
+          this.breakTitle = this.breakTitle.splice(i, 1);
         }
       }
     }
