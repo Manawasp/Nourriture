@@ -44,22 +44,34 @@ router.post('/search', function(req, res){
   limit = 21
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 20) {limit = params.limit}
+  if (params.access && Array.isArray(params.access) && params.access.length > 0) {
+    query.where('access').in(params.access);
+  }
   query.skip(offset).limit(limit)
   query.exec(function (err, users) {
-    data_user = []
     if (err) {
-      rData = {error: "search fail"}
-      log.writeLog(req, "user", 500, rData)
+      rData = {error: "search users fail"}
+      log.writeLog(req, "users", 500, rData)
       res.send(500, rData)
+    } else {
+      // Count the number of solution for this request (limit is deleted)
+      query.count(function(err, c) {
+        data_user = []
+        if (err) {
+          rData = {error: "search users fail"}
+          log.writeLog(req, "user", 500, rData)
+          res.send(500, rData)
+        }
+        else if (users) {
+          for (var i = 0; i < users.length; i++) {
+            data_user.push(users[i].information())
+          }
+        }
+        rData = {users: data_user, limit: limit, offset: offset, size: data_user.length, max: c}
+        log.writeLog(req, "user", 200, rData)
+        res.send(200, rData)
+      });
     }
-    else if (users) {
-      for (var i = 0; i < users.length; i++) {
-        data_user.push(users[i].information())
-      }
-    }
-    rData = {users: data_user, limit: limit, offset: offset, size: data_user.length}
-    log.writeLog(req, "user", 200, rData)
-    res.send(200, rData)
   });
 })
 
