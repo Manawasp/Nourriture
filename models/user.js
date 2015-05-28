@@ -75,6 +75,7 @@ User.methods.update_information = function(params) {
 
 User.methods.update_access = function(data) {
   result = {consumer: true, supplier: false, gastronomist: false, admin: true};
+  newArray = []
   // INIT ACCESS DATA
   for (var i = 0; i < this.access.length; i++) {
     if (this.access[i] == "supplier") {
@@ -88,25 +89,26 @@ User.methods.update_access = function(data) {
   // UDPATE ACCESS DATA
   if (data.supplier != undefined) {
     result.supplier = data.supplier;
-  } else if (data. != undefined) {
-    result.gastronomist = data.gastronomist;
-  } else if (data. != undefined) {
+  } else if (data.cooker != undefined) {
+    result.gastronomist = data.cooker;
+  } else if (data.admin != undefined) {
     result.admin = data.admin;
   }
   // BUILD DATA IN USER
   this.access.length = 0
   if (result.admin == true) {
-    this.access.push("admin");
+    newArray.push("admin");
   }
   if (result.gastronomist == true) {
-    this.access.push("gastronomist")
+    newArray.push("gastronomist")
   }
   if (result.supplier == true) {
-    this.access.push("supplier")
+    newArray.push("supplier")
   }
   if (result.consumer == true) {
-    this.access.push("consumer")
+    newArray.push("consumer")
   }
+  this.access = newArray
 }
 
 User.methods.check_password = function(password) {

@@ -44,6 +44,9 @@ router.post('/search', function(req, res){
   limit = 21
   if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
   if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 20) {limit = params.limit}
+  if (params.access && Array.isArray(params.access) && params.access.length > 0) {
+    query.where('access').in(params.access);
+  }
   query.skip(offset).limit(limit)
   query.exec(function (err, users) {
     if (err) {
