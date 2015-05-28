@@ -28,124 +28,21 @@ router.use(function(req, res, next) {
 });
 
 /**
- * [SEARCH] User Collection
- */
-
-router.post('/search', function(req, res){
-  res.type('application/json');
-  params = req.body
-  if (typeof params.pseudo == 'string') {
-    var re = new RegExp(params.pseudo, 'i');
-    query = User.find({'pseudo': re})
-  } else {
-    query = User.find({})
-  }
-  offset = 0
-  limit = 21
-  if (typeof params.offset == 'number' && params.offset > 0) {offset = params.offset}
-  if (typeof params.limit == 'number' && params.limit > 0 && params.limit <= 20) {limit = params.limit}
-  query.skip(offset).limit(limit)
-  query.exec(function (err, users) {
-    if (err) {
-      rData = {error: "search users fail"}
-      log.writeLog(req, "users", 500, rData)
-      res.send(500, rData)
-    } else {
-      // Count the number of solution for this request (limit is deleted)
-      query.count(function(err, c) {
-        data_user = []
-        if (err) {
-          rData = {error: "search users fail"}
-          log.writeLog(req, "user", 500, rData)
-          res.send(500, rData)
-        }
-        else if (users) {
-          for (var i = 0; i < users.length; i++) {
-            data_user.push(users[i].information())
-          }
-        }
-        rData = {users: data_user, limit: limit, offset: offset, size: data_user.length, max: c}
-        log.writeLog(req, "user", 200, rData)
-        res.send(200, rData)
-      });
-    }
-  });
-})
-
-/**
- * [POST] User Collection
- */
-
-router.post('/', function(req, res){
-  res.type('application/json');
-  user = new User;
-  error = user.create_by_email(req.body)
-  if (error) {
-    rData = {error: error}
-    log.writeLog(req, "user", 400, rData)
-    res.send(400, rData);
-  }
-  else {
-    uniqueness_email(user, req, res, valide_create)
-  }
-})
-
-/**
- * [GET] User
- */
-
-router.get('/:uid', function(req, res){
-  res.type('application/json')
-  User.findOne({'_id': req.params.uid}, '', function (err, u) {
-    if (u) {
-      if (u._id == auth.user_id()) {
-        rData = u.personal_information()
-        log.writeLog(req, "user", 200, rData)
-        res.send(200, rData)
-      }
-      else {
-        rData = u.information()
-        log.writeLog(req, "user", 200, rData)
-        res.send(200, rData)
-      }
-    }
-    else {
-      rData = {error: "resource not found"}
-      log.writeLog(req, "user", 404, rData)
-      res.send(404, rData)
-    }
-  });
-})
-
-/**
  * [UPDATE] User
  */
 
 router.patch('/:uid', function(req, res){
   res.type('application/json');
+	params = req.body
   User.findOne({'_id': req.params.uid}, '', function (err, u) {
     if (u) {
-      if (u._id == auth.user_id())
+      if (auth.access_admin() == true)
       {
-        if (!Object.keys(req.body).length) {
-          rData = {error: "empty request"}
-          log.writeLog(req, "user", 400, rData)
-          res.send(400, rData)
-        }
-        else {
-          error = u.update_information(req.body)
-          if (error == null && req.body.email) {
-            uniqueness_email(u, req, res, valide_create)
-          }
-          else if (error == null){
-            valide_create(u, req, res)
-          }
-          else {
-            rData = {error: error}
-            log.writeLog(req, "user", 400, rData)
-            res.send(400, rData)
-          }
-        }
+				u.update_access(params)
+				u.save()
+			  rData = {token: user.auth_token(), user: user.personal_information()}
+			  log.writeLog(req, "adminUser", 200, rData)
+			  res.send(200, rData)
       }
       else {
         rData = {error: "you don't have the permission"}

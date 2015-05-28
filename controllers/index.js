@@ -4,20 +4,23 @@ var express = require('express')
 /**
  * Aplication route
  */
-
-router.use('/users',        	  require('./users'));
 // router.use('/followers',    	  require('./followers'));
 // router.use('/followeds',    	  require('./followeds'));
+// router.use('/moments',      	  require('./moments'));
+// router.use('/comments/moments',	require('./moments_comments'));
+// router.use('/like/moments',    	require('./moments_like'));
+
+router.use('/users',        	  require('./users'));
 router.use('/sessions',     	  require('./sessions'));
 router.use('/ingredients',  	  require('./ingredients'));
-// router.use('/moments',      	  require('./moments'));
 router.use('/recipes',      	  require('./recipes'));
-// router.use('/comments/moments',	require('./moments_comments'));
 router.use('/reviews/recipes',	require('./recipes_reviews'));
-router.use('/favorites',       require('./recipes_favorites'));
-// router.use('/like/moments',    	require('./moments_like'));
+router.use('/favorites',        require('./recipes_favorites'));
 router.use('/pictures/',   		  require('./pictures'));
 router.use('/homepage/',   		  require('./comrecipe'));
+
+// Admin access
+router.use('/admin', require('./admin'));
 
 /**
  * 404 no route catching

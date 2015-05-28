@@ -73,6 +73,42 @@ User.methods.update_information = function(params) {
   return null
 }
 
+User.methods.update_access = function(data) {
+  result = {consumer: true, supplier: false, gastronomist: false, admin: true};
+  // INIT ACCESS DATA
+  for (var i = 0; i < this.access.length; i++) {
+    if (this.access[i] == "supplier") {
+      result.supplier = true;
+    } else if (this.access[i] == "gastronomist") {
+      result.gastronomist = true;
+    } else if (this.access[i] == "admin") {
+      result.admin = true;
+    }
+  }
+  // UDPATE ACCESS DATA
+  if (data.supplier != undefined) {
+    result.supplier = data.supplier;
+  } else if (data. != undefined) {
+    result.gastronomist = data.gastronomist;
+  } else if (data. != undefined) {
+    result.admin = data.admin;
+  }
+  // BUILD DATA IN USER
+  this.access.length = 0
+  if (result.admin == true) {
+    this.access.push("admin");
+  }
+  if (result.gastronomist == true) {
+    this.access.push("gastronomist")
+  }
+  if (result.supplier == true) {
+    this.access.push("supplier")
+  }
+  if (result.consumer == true) {
+    this.access.push("consumer")
+  }
+}
+
 User.methods.check_password = function(password) {
   return (this.password == crypto.createHash('md5').update(password).digest("hex"))
 }
