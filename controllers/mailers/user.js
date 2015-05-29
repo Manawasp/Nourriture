@@ -41,7 +41,7 @@ exports.confirmation = function(email, pseudo) {
 
 exports.resetPassword = function(email, pseudo, hash) {
 	html = haml.render(resetPasswordHaml, {locals: {pseudo: pseudo, token:
-		'<a class="button" href="http://localhost:3000/resetpassword?token=' + token + '">Reset my password</a>'}})
+		'<a class="button" href="http://localhost:3000/#/resetpassword?action=resetpassword&token=' + token + '">Reset my password</a>'}})
 	console.log(email)
 	mailOpts = {
 		from: 'account-management@goodrecipes.com',
