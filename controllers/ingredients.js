@@ -25,6 +25,7 @@ router.use(function(req, res, next) {
   }
 })
 
+
 /**
  * [SEARCH] Ingredients Collection
  */

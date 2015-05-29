@@ -23,6 +23,11 @@ var User = new Schema({
  * Public Method
  */
 
+User.methods.createSalt = function() {
+  this.salt       = crypto.createHash('md5').update((new Date().toString() + mongoose.Types.ObjectId() + "#salt")).digest("hex");
+  return this.salt
+}
+
 User.methods.create_by_email = function(params) {
   error = exist_pseudo(params.pseudo)     || validate_pseudo(params.pseudo)  ||
           exist_email(params.email)       || validate_email(params.email)    ||
@@ -147,6 +152,15 @@ User.methods.information = function() {
 User.methods.auth_token = function() {
   return (jwt.sign({id: this._id, salt: this.salt, access: this.access}, secret));
 }
+
+/**
+ * Create JWT token
+ */
+
+
+ User.methods.tokenResetPassword = function(salt) {
+   return (jwt.sign({id: this._id, salt: salt, date: Date()}, secret));
+ }
 
 /**
  * Followers methods

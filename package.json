@@ -20,6 +20,9 @@
     "connect-multiparty": "*",
     "mongoose-random": "*",
     "ioredis": "*",
-    "bunyan": "*"
+    "bunyan": "*",
+    "haml": "*",
+    "nodemailer": "*",
+    "nodemailer-smtp-transport": "*"
   }
 }

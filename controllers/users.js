@@ -11,7 +11,9 @@ var express   = require('express')
   , Redis     = require("ioredis")
   , redisClient = new Redis()
   , auth      = require('./services/authentification')
-  , log         = require('./services/log');
+  , mailerUser  = require('./mailers/user')
+  , log         = require('./services/log')
+  , tokenacc    = require('./services/tokenaccount');
   redisClient.setMaxListeners(0);
 
 /**
@@ -19,11 +21,90 @@ var express   = require('express')
  */
 
 router.use(function(req, res, next) {
-  if (req.path == '/') {
+  if (req.path == '/' || req.path == '/account/reset') {
     next()
   } else {
     res.type('application/json');
     auth.verify(req.header('Auth-Token'), res, next)
+  }
+});
+
+
+/**
+ * [UPDATE] User via token and only password
+ */
+
+router.patch('/account/reset', function(req, res){
+  res.type('application/json');
+  params = req.body;
+  if (params.token != undefined && params.password != undefined) {
+    resToken = tokenacc.verify(req, res, params.password, params.token, function(req, res, password, resToken){
+      if (resToken.error == undefined) {
+        User.findOne({'_id': resToken.user_id}, '', function (err, u) {
+          if (u) {
+            error = u.update_information({password: password})
+            if (error == null) {
+              u.save()
+              tokenacc.deleteHash(resToken.user_id, resToken.salt)
+              rData = {token: u.auth_token(), user: u.personal_information()}
+              log.writeLog(req, "account", 200, rData)
+              res.send(200, rData)
+            }
+            else {
+              rData = {error: error}
+              log.writeLog(req, "user", 400, rData)
+              res.send(400, rData)
+            }
+          }
+          else {
+            rData = {error: "resource not found"}
+            log.writeLog(req, "user", 404, rData)
+            res.send(404, rData)
+          }
+        });
+      } else {
+        rData = resToken.error
+        log.writeLog(req, "account", resToken.status, rData)
+        res.send(resToken.status, rData)
+      }
+    });
+  } else {
+    rData = {error: "bad parameters"}
+    log.writeLog(req, "account", 400, rData)
+    res.send(400, rData)
+  }
+});
+
+/**
+ * [POST] Get user reset password
+ */
+
+router.post('/account/reset', function(req, res) {
+  res.type('application/json');
+  params = req.body;
+  if (params.email != undefined) {
+    User.findOne({'email': params.email}, '', function (err, u) {
+      if (u) {
+        salt  = u.createSalt();
+        token = u.tokenResetPassword(salt);
+        redisClient.lpush(["user:" + u._id + ":account", salt], function(err, result){
+          // redisClient.quit();
+        });
+        mailerUser.resetPassword(u.email, u.pseudo, token)
+        rData = {error: "verification sent"}
+        log.writeLog(req, "account", 200, rData)
+        res.send(200, rData)
+      }
+      else {
+        rData = {error: "resource not found"}
+        log.writeLog(req, "account", 404, rData)
+        res.send(404, rData)
+      }
+    });
+  } else {
+    rData = {error: "bad parameters"}
+    log.writeLog(req, "account", 403, rData)
+    res.send(403, rData);
   }
 });
 
@@ -257,6 +338,8 @@ var valide_create = function(user, req, res) {
   user.save()
   if (req.method == "POST" && req.path == '/') {
     user.new_salt();
+    console.log("mail ! :" + user.email)
+    mailerUser.confirmation(user.email, user.pseudo)
     redisClient.lpush(["user:" + user._id + ":token", user.salt], function(err, result){
       // redisClient.quit();
     });
