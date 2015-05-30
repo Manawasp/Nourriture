@@ -1,6 +1,6 @@
 var jwt       = require('jsonwebtoken')
   , Redis     = require("ioredis")
-  , redisClient = new Redis()
+  , redisClient = new Redis({host:  process.env.NOURRITURE_REDIS_1_PORT_6379_TCP_ADDR || '127.0.0.1'})
   , secret    = 'eyJmaXJzdG5hbWUiOiJDbG92aXMiLCJsYXN0bmF'
   , userId   = null
   , userSalt 	= null
