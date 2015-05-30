@@ -8,7 +8,7 @@ var express   = require('express')
   , mongoose  = require('mongoose')
   , User      = mongoose.model('User')
   , Redis     = require("ioredis")
-  , redisClient = new Redis()
+  , redisClient = new Redis({host:  process.env.NOURRITURE_REDIS_1_PORT_6379_TCP_ADDR || '127.0.0.1'})
   , auth      = require('./services/authentification')
   , log         = require('./services/log');
   redisClient.setMaxListeners(0);

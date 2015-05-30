@@ -340,19 +340,19 @@ describe('Ingredients Controller', function(){
   });
 
   describe('SEARCH Ingredient', function(){
-    it ("401: unhautorized if not connected", function(done){
-     request
-      .post('localhost:8080/ingredients/search')
-      .set('Content-Type', 'application/json')
-      .send('{}')
-      .end(function(res)
-      {
-        expect(res).to.exist;
-        expect(res.status).to.equal(401);
-        expect(res.body.error).to.equal("you need to be connected");
-        done()
-      });
-    })
+    // it ("401: unhautorized if not connected", function(done){
+    //  request
+    //   .post('localhost:8080/ingredients/search')
+    //   .set('Content-Type', 'application/json')
+    //   .send('{}')
+    //   .end(function(res)
+    //   {
+    //     expect(res).to.exist;
+    //     expect(res.status).to.equal(401);
+    //     expect(res.body.error).to.equal("you need to be connected");
+    //     done()
+    //   });
+    // })
 
     it ("200: search without pattern", function(done){
      request
